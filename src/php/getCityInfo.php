@@ -5,7 +5,7 @@
   error_reporting(E_ALL);
 
   $iso2 = $_GET["iso2"];
-  $geonames_url = "http://api.geonames.org/searchJSON?username=brabli&country=" . $iso2 . "&maxRows=10";
+  $geonames_url = "http://api.geonames.org/searchJSON?username=brabli&country=" . $iso2 . "&maxRows=16";
 
   // cURL to get city info from geonames
   $curl_geonames = curl_init();
@@ -17,5 +17,32 @@
   $decoded = json_decode($result, true);
   $decoded = $decoded["geonames"];
 
-  echo json_encode($decoded);
+  // Remove non-cities from results
+  for ($i = 0; $i < sizeof($decoded); $i++) {
+    if ($decoded[$i]["fclName"] !== "city, village,...") {
+      unset($decoded[$i]);
+    }
+  }
+
+  // Reduce to 10 entries
+  $decoded = array_slice($decoded, 0, 10);
+
+  $response = [];
+  foreach ($decoded as $entry) {
+    $city["name"] = $entry["name"];
+    $city["population"] = $entry["population"];
+    $city["lat"] = $entry["lat"];
+    $city["long"] = $entry["lng"];
+    if (strpos($entry["fcodeName"], "capital") !== FALSE) {
+      $city["isCapital"] = TRUE;
+    } else {
+      $city["isCapital"] = FALSE;
+    }
+    $city["country"] = $entry["countryName"];
+    $city["iso2"] = strtolower($entry["countryCode"]);
+
+    array_push($response, $city);
+  }
+
+  echo json_encode($response);
 ?>

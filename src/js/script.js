@@ -34,11 +34,8 @@ $(document).ready(() => {
 
     // Request country info
     const countryRes = await fetch(`php/getCountryBorders.php?lat=${e.latlng["lat"]}&long=${e.latlng["lng"]}`);
-    console.log("Testinggggg...1");
     const countryJson = await countryRes.json();
-    console.log("Testinggggg...2");
-    console.log(countryJson);
-
+   
     // Remove all layers except for basetiles and overlay tiles.
     map.eachLayer(layer => {
       if (!layer._url) map.removeLayer(layer);
@@ -50,6 +47,7 @@ $(document).ready(() => {
     // Add border to map and fit to size
     const geojson = countryJson.geojson;
     const geojsonFeature = L.geoJson(geojson).addTo(map);
+    // Make this fly?
     map.fitBounds(geojsonFeature.getBounds());
 
     // Request city info
@@ -57,9 +55,8 @@ $(document).ready(() => {
 
     const cityInfoJson = await cityInfo.json();
     console.log(cityInfoJson);
-    // for (city of cityInfoJson) {
-    //   console.log(city);
-    // }
+
+    
     
   });
 
