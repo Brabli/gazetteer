@@ -23,8 +23,6 @@
       unset($decoded[$key]);
     }
   }
-  
-  
 
   // Reduce to 10 entries
   $decoded = array_slice($decoded, 0, 10);

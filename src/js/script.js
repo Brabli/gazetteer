@@ -1,12 +1,31 @@
 $(document).ready(() => {
 
+
+  var hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
+    MAX_LATITUDE: 89.999
+  });
+  
+  var hackedEPSG3857 = L.Util.extend(L.CRS.EPSG3857, {
+    projection: hackedSphericalMercator
+  });
+  
+
+  // var southWest = L.latLng(-89.98155760646617, -180),
+  // northEast = L.latLng(89.99346179538875, 180);
+  // var bounds = L.latLngBounds(southWest, northEast);
+
   // Create map
   const map = L.map('map', {
+    crs: hackedEPSG3857,
+    maxBounds: [[-85, -Infinity], [85, Infinity]],
     maxZoom: 18,
-    minZoom: 2,
-    maxBoundsViscosity: 0.0
+    minZoom: 1.5,
+    maxBoundsViscosity: 0.5,
+    attributionControl: false
   })
   .fitWorld();
+
+
 
   // Define fly to user location func
   function flyToUserLocation() {
@@ -22,16 +41,41 @@ $(document).ready(() => {
   basemaps.World.addTo(map);
   // Add layer control  
   L.control.layers(basemaps, overlays).addTo(map);
+  // Add attribution toggle
+  // L.control.attribution({
+  //   prefix: "test",
+
+  
+  // }).addTo(map);
   // Add map zoom out control
   L.easyButton('fa-star', function() {
     map.flyTo(new L.LatLng(35, -15), 2);
-  }).addTo(map);
+  }, "Centre Map").addTo(map);
   // Add fly to user location button
-  L.easyButton('?', flyToUserLocation).addTo(map);
+  L.easyButton('?', flyToUserLocation, "Fly to Current Location").addTo(map);
+
+  let attributionToggle = true;
+  const attControl = L.control.attribution({
+    prefix: ""
+  });
+  L.easyButton("class",
+  () => {
+    attributionToggle ? attControl.addTo(map) : attControl.remove(map);
+    attributionToggle = !attributionToggle;
+  },
+  "Toggle Attributions").addTo(map);
 
   /* Set borders on click handler */
   map.on("click", async e => {
 
+    while (e.latlng['lng'] < -180) {
+      e.latlng["lng"] += 360;
+    }
+
+    while (e.latlng["lng"] > 180) {
+      e.latlng["lng"] -= 360;
+    }
+    
     // Request country info
     const countryRes = await fetch(`php/getCountryBorders.php?lat=${e.latlng["lat"]}&long=${e.latlng["lng"]}`);
     const countryJson = await countryRes.json();
@@ -41,8 +85,22 @@ $(document).ready(() => {
       if (!layer._url) map.removeLayer(layer);
     });
 
+
+    let center = map.getCenter();
+    while (center['lng'] < -180) {
+      center["lng"] += 360;
+    }
+
+    while (center["lng"] > 180) {
+      center["lng"] -= 360;
+    }
+    map.setView(center, map.getZoom());
+
     // Return out of func if over ocean
     if (countryJson.isCountry === false) return;
+
+
+
 
     // Add border to map and fit to size
     const geojson = countryJson.geojson;
@@ -56,16 +114,52 @@ $(document).ready(() => {
     const cityInfoJson = await cityInfo.json();
     console.log(cityInfoJson);
 
-    // Make pins
+    
+
+
+
+    // Make markers (move to it's own func / file)
     const cityMarkers = [];
     for (city of cityInfoJson) {
-      const cityMarker = L.marker([city.lat, city.long]).bindPopup(`${city.name}, ${city.country}`);
+      const cityMarker = L.marker([city.lat, city.long], {
+        icon: city.isCapital ? redIcon : blueIcon
+      }).bindPopup(`
+      <div class="city-popup">
+        <h2>${city.name}${city.isCapital ? " &#9733;" : ""
+        }</h2>
+        <h4 style="font-style: italic">${city.country} <span style="font-size: 20px; vertical-align: middle">${countryJson.data.flag}</span></h4>
+        <hr>
+        <table>
+          <tr>
+            <th>Population:</th>
+            <td>${city.population.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <th>Latitude:</th>
+            <td>${city.lat}</td>
+          </tr>
+          <tr>
+            <th>Longitude:</th>
+            <td>${city.long}</td>
+          </tr>
+        </table
+        <hr>
+        <table>
+
+
+      </div>
+      `);
       cityMarkers.push(cityMarker);
     }
     const cityGroup = L.layerGroup(cityMarkers);
     cityGroup.addTo(map);
     
   });
+
+
+
+
+
 
     // Fly to user location
     flyToUserLocation();
@@ -125,3 +219,85 @@ const overlays = {
     "https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=5ef63273faed449d6aa6767c0b02c334"
   )
 };
+
+/* MARKERS */
+const blueIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-blue.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+const goldIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-gold.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+const redIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-red.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+const greenIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-green.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+const orangeIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-orange.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+const yellowIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-yellow.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+const violetIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-violet.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+const greyIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-grey.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
+
+const blackIcon = new L.Icon({
+	iconUrl: 'img/marker-icon-2x-black.png',
+	shadowUrl: 'img/marker-shadow.png',
+	iconSize: [25, 41],
+	iconAnchor: [12, 41],
+	popupAnchor: [1, -34],
+	shadowSize: [41, 41]
+});
