@@ -56,7 +56,14 @@ $(document).ready(() => {
     const cityInfoJson = await cityInfo.json();
     console.log(cityInfoJson);
 
-    
+    // Make pins
+    const cityMarkers = [];
+    for (city of cityInfoJson) {
+      const cityMarker = L.marker([city.lat, city.long]).bindPopup(`${city.name}, ${city.country}`);
+      cityMarkers.push(cityMarker);
+    }
+    const cityGroup = L.layerGroup(cityMarkers);
+    cityGroup.addTo(map);
     
   });
 

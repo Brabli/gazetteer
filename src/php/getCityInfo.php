@@ -5,7 +5,7 @@
   error_reporting(E_ALL);
 
   $iso2 = $_GET["iso2"];
-  $geonames_url = "http://api.geonames.org/searchJSON?username=brabli&country=" . $iso2 . "&maxRows=16";
+  $geonames_url = "http://api.geonames.org/searchJSON?username=brabli&country=" . $iso2 . "&maxRows=20";
 
   // cURL to get city info from geonames
   $curl_geonames = curl_init();
@@ -18,11 +18,13 @@
   $decoded = $decoded["geonames"];
 
   // Remove non-cities from results
-  for ($i = 0; $i < sizeof($decoded); $i++) {
-    if ($decoded[$i]["fclName"] !== "city, village,...") {
-      unset($decoded[$i]);
+  foreach ($decoded as $key => $entry) {
+    if ($entry["fclName"] !== "city, village,...") {
+      unset($decoded[$key]);
     }
   }
+  
+  
 
   // Reduce to 10 entries
   $decoded = array_slice($decoded, 0, 10);
