@@ -4,6 +4,15 @@
   ini_set('display_errors', 'On');
   error_reporting(E_ALL);
 
+  // Early return function definition
+  function early_return($msg) {
+    $response["isCountry"] = FALSE;
+    $response["message"] = $msg;
+    header('Content-type: application/json');
+    echo json_encode($response);
+    exit();
+  }
+
   // Init vars for cURL call
   $lat = $_GET["lat"];
   $long = $_GET["long"];
@@ -18,15 +27,23 @@
   $result = curl_exec($curl_opencage);
   curl_close($curl_opencage);
   $decoded = json_decode($result, TRUE);
-  $decoded = $decoded["results"][0];
 
-  // Check to see if coords correspond to a country or not
-  if (array_key_exists("body_of_water", $decoded["components"])) {
-    $response["isCountry"] = FALSE;
-    echo json_encode($response);
-    exit();
+
+  // Make sure appropriate data exists in response
+  if (array_key_exists("0", $decoded["results"])) {
+    $decoded = $decoded["results"]["0"];
+  } else {
+    early_return("Array key 0 does not exist!");
+  }
+
+  // Early return if user clicked a body of water instead of a country
+  if (array_key_exists("body_of_water", $decoded["components"]) === FALSE) {
+    $response["isCountry"] = TRUE;
+  } else {
+    early_return("Not a country!");
   }
   
+
   // Get ISO2 code
   $country_ISO2 = $decoded["components"]["ISO_3166-1_alpha-2"];
   // Find ISO3 code (sometimes it's not in respose JSON so we refer to a json file in country-borders that maps ISO2 codes to their ISO3 versions)
@@ -37,12 +54,13 @@
     $country_ISO3 = $iso_json[$country_ISO2];
   }
 
-  // Find appropriate geoJSON file from country-borders directory using ISO3 code
+
+  // Find appropriate geoJSON file from country-borders directory using ISO3 code.
   $filepath = "../country-borders/" . strtolower($country_ISO3) . ".geo.json";
   $file_contents = file_get_contents($filepath);
   
+
   // Construct JSON response
-  $response["isCountry"] = TRUE;
   $response["geojson"] = json_decode($file_contents, TRUE);
   $response["data"]["iso3"] = strtolower($country_ISO3);
   $response["data"]["iso2"] = strtolower($country_ISO2);
@@ -50,7 +68,9 @@
   $response["data"]["countryName"] = $decoded["components"]["country"];
   $response["data"]["continent"] = $decoded["components"]["continent"];
   $response["data"]["wikiLink"] = str_replace(" ","_", ("https://en.wikipedia.org/wiki/" . $response["data"]["countryName"]));
-  // For some reason Isle of Man doesn't have currency?
+
+
+  // Default currency to British Pound if none exists in data (For Isle of Man mainly)
   if (array_key_exists("currency", $decoded["annotations"])) {
     $response["data"]["currencyName"] = $decoded["annotations"]["currency"]["name"];
     $response["data"]["currencySymbol"] = $decoded["annotations"]["currency"]["html_entity"];
@@ -60,5 +80,6 @@
   }
 
   // Send response
+  header('Content-type: application/json');
   echo json_encode($response);
 ?>

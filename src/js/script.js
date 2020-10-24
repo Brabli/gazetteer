@@ -1,3 +1,4 @@
+// Module imports
 import basemaps from "./basemaps.js";
 import overlays from "./overlays.js";
 
@@ -14,7 +15,7 @@ $(document).ready(() => {
   const map = L.map('map', {
     crs: hackedEPSG3857,
     maxBounds: [[-85, -Infinity], [85, Infinity]],
-    maxZoom: 18,
+    maxZoom: 17,
     minZoom: 1.5,
     maxBoundsViscosity: 0.5,
     attributionControl: false
@@ -63,6 +64,7 @@ $(document).ready(() => {
     const correctedLng = lng - (correctedOffset * 180);
     // Debugging above
     console.log(`
+      Latitude: ${lat}
       Longitude: ${lng}
       Offset: ${correctedOffset}
       Subtracting from original long: ${correctedOffset * 180}
@@ -91,7 +93,7 @@ $(document).ready(() => {
 
     // Return out of func if over ocean
     if (countryJson.isCountry === false) return;
-    
+
     map.setView(center, zoomLevel);
 
     // Add border to map and fit to size
