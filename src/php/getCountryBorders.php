@@ -17,7 +17,7 @@
   curl_setopt($curl_opencage, CURLOPT_URL, $opencage_url);
   $result = curl_exec($curl_opencage);
   curl_close($curl_opencage);
-  $decoded = json_decode($result, true);
+  $decoded = json_decode($result, TRUE);
   $decoded = $decoded["results"][0];
 
   // Check to see if coords correspond to a country or not
@@ -26,19 +26,26 @@
     echo json_encode($response);
     exit();
   }
+  
+  // Get ISO2 code
+  $country_ISO2 = $decoded["components"]["ISO_3166-1_alpha-2"];
+  // Find ISO3 code (sometimes it's not in respose JSON so we refer to a json file in country-borders that maps ISO2 codes to their ISO3 versions)
+  if (array_key_exists("ISO_3166-1_alpha-3", $decoded["components"])) {
+    $country_ISO3 = $decoded["components"]["ISO_3166-1_alpha-3"];
+  } else {
+    $iso_json = json_decode(file_get_contents("../country-borders/iso2-to-iso3.json"), TRUE);
+    $country_ISO3 = $iso_json[$country_ISO2];
+  }
 
-  // Find ISO3 code (eg: gbr, usa, aus)
-  $country_ISO3 = strtolower($decoded["components"]["ISO_3166-1_alpha-3"]);
-
-  // Find appropriate geoJSON file from country-borders directory
-  $filepath = "../country-borders/" . $country_ISO3 . ".geo.json";
+  // Find appropriate geoJSON file from country-borders directory using ISO3 code
+  $filepath = "../country-borders/" . strtolower($country_ISO3) . ".geo.json";
   $file_contents = file_get_contents($filepath);
   
   // Construct JSON response
   $response["isCountry"] = TRUE;
   $response["geojson"] = json_decode($file_contents, TRUE);
-  $response["data"]["iso3"] = $country_ISO3;
-  $response["data"]["iso2"] = strtolower($decoded["components"]["ISO_3166-1_alpha-2"]);
+  $response["data"]["iso3"] = strtolower($country_ISO3);
+  $response["data"]["iso2"] = strtolower($country_ISO2);
   $response["data"]["flag"] = $decoded["annotations"]["flag"];
   $response["data"]["countryName"] = $decoded["components"]["country"];
   $response["data"]["continent"] = $decoded["components"]["continent"];
