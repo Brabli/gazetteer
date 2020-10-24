@@ -1,18 +1,11 @@
 $(document).ready(() => {
-
-
-  var hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
+  // These override some settings that allow infinite horizontal scrolling possible
+  const hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
     MAX_LATITUDE: 89.999
   });
-  
-  var hackedEPSG3857 = L.Util.extend(L.CRS.EPSG3857, {
+  const hackedEPSG3857 = L.Util.extend(L.CRS.EPSG3857, {
     projection: hackedSphericalMercator
   });
-  
-
-  // var southWest = L.latLng(-89.98155760646617, -180),
-  // northEast = L.latLng(89.99346179538875, 180);
-  // var bounds = L.latLngBounds(southWest, northEast);
 
   // Create map
   const map = L.map('map', {
@@ -25,8 +18,6 @@ $(document).ready(() => {
   })
   .fitWorld();
 
-
-
   // Define fly to user location func
   function flyToUserLocation() {
     console.log("Flying to location...");
@@ -37,47 +28,45 @@ $(document).ready(() => {
     }
   }
   
-  // Add initial basemap
+  // Add initial basemap tiles
   basemaps.World.addTo(map);
-  // Add layer control  
+
+  // Add controls
+  // Layer 
   L.control.layers(basemaps, overlays).addTo(map);
-  // Add attribution toggle
-  // L.control.attribution({
-  //   prefix: "test",
-
-  
-  // }).addTo(map);
-  // Add map zoom out control
+  // Zoom Out
   L.easyButton('fa-star', function() {
-    map.flyTo(new L.LatLng(35, -15), 2);
+    map.flyTo(new L.LatLng(45, -5), 2);
   }, "Centre Map").addTo(map);
-  // Add fly to user location button
+  // Fly to Location
   L.easyButton('?', flyToUserLocation, "Fly to Current Location").addTo(map);
-
+  // Attribution Toggle
   let attributionToggle = true;
-  const attControl = L.control.attribution({
-    prefix: ""
-  });
-  L.easyButton("class",
-  () => {
+  const attControl = L.control.attribution();
+  L.easyButton("class", () => {
     attributionToggle ? attControl.addTo(map) : attControl.remove(map);
     attributionToggle = !attributionToggle;
-  },
-  "Toggle Attributions").addTo(map);
+  }, "Toggle Attributions").addTo(map);
 
-  /* Set borders on click handler */
+  /* Fetch country info */
   map.on("click", async e => {
+    // Lat / Lng vars
+    const lat = e.latlng["lat"];
+    const lng = e.latlng["lng"];
+    // Corrects longitude offset from infinite scrolling map
+    const offset = Math.floor(lng / 180);
+    const correctedOffset = offset === -1 ? 0 : offset;
+    const correctedLng = lng - (correctedOffset * 180);
+    // Debugging above
+    console.log(`
+      Longitude: ${lng}
+      Offset: ${correctedOffset}
+      Subtracting from original long: ${correctedOffset * 180}
+      Corrected Longitude: ${correctedLng}
+    `);
 
-    while (e.latlng['lng'] < -180) {
-      e.latlng["lng"] += 360;
-    }
-
-    while (e.latlng["lng"] > 180) {
-      e.latlng["lng"] -= 360;
-    }
-    
     // Request country info
-    const countryRes = await fetch(`php/getCountryBorders.php?lat=${e.latlng["lat"]}&long=${e.latlng["lng"]}`);
+    const countryRes = await fetch(`php/getCountryBorders.php?lat=${lat}&long=${correctedLng}`);
     const countryJson = await countryRes.json();
    
     // Remove all layers except for basetiles and overlay tiles.
@@ -85,22 +74,19 @@ $(document).ready(() => {
       if (!layer._url) map.removeLayer(layer);
     });
 
-
+    const zoomLevel = map.getZoom();
     let center = map.getCenter();
+
     while (center['lng'] < -180) {
       center["lng"] += 360;
     }
-
     while (center["lng"] > 180) {
       center["lng"] -= 360;
     }
-    map.setView(center, map.getZoom());
+    map.setView(center, zoomLevel);
 
     // Return out of func if over ocean
     if (countryJson.isCountry === false) return;
-
-
-
 
     // Add border to map and fit to size
     const geojson = countryJson.geojson;
@@ -113,10 +99,6 @@ $(document).ready(() => {
 
     const cityInfoJson = await cityInfo.json();
     console.log(cityInfoJson);
-
-    
-
-
 
     // Make markers (move to it's own func / file)
     const cityMarkers = [];
@@ -145,24 +127,16 @@ $(document).ready(() => {
         </table
         <hr>
         <table>
-
-
       </div>
       `);
       cityMarkers.push(cityMarker);
     }
+    // Add marker array to map
     const cityGroup = L.layerGroup(cityMarkers);
     cityGroup.addTo(map);
-    
   });
-
-
-
-
-
-
     // Fly to user location
-    flyToUserLocation();
+    //flyToUserLocation();
 });
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -200,23 +174,22 @@ const basemaps = {
 /* OVERLAY MAPS */
 const overlays = {
   "Temperature": L.tileLayer(
-    "https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=5ef63273faed449d6aa6767c0b02c334"
+    "php/getOverlayTiles.php?z={z}&x={x}&y={y}&tiles=temp_new"
   ),
-
   "Clouds": L.tileLayer(
-    "https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=5ef63273faed449d6aa6767c0b02c334"
+    "php/getOverlayTiles.php?z={z}&x={x}&y={y}&tiles=clouds_new"
   ),
 
   "Precipitation": L.tileLayer(
-    "https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=5ef63273faed449d6aa6767c0b02c334"
+    "php/getOverlayTiles.php?z={z}&x={x}&y={y}&tiles=precipitation_new"
   ),
 
   "Wind Speed": L.tileLayer(
-    "https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=5ef63273faed449d6aa6767c0b02c334"
+    "php/getOverlayTiles.php?z={z}&x={x}&y={y}&tiles=wind_new"
   ),
 
   "Sea Level Pressure": L.tileLayer(
-    "https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=5ef63273faed449d6aa6767c0b02c334"
+    "php/getOverlayTiles.php?z={z}&x={x}&y={y}&tiles=pressure_new"
   )
 };
 
