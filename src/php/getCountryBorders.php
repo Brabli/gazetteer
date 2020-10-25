@@ -61,6 +61,7 @@
   
 
   // Construct JSON response
+  $response["message"] = "ok";
   $response["geojson"] = json_decode($file_contents, TRUE);
   $response["data"]["iso3"] = strtolower($country_ISO3);
   $response["data"]["iso2"] = strtolower($country_ISO2);
