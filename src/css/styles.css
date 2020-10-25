@@ -22,5 +22,34 @@ img {
 
 #map {
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 2.4rem);
+  position: absolute;
+  bottom: 0;
+  z-index: 0;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+
+#navbar {
+  position: relative;
+  z-index: 1;
+  height: 2.4rem;
+  min-height: 20px;
+  background-color: rgb(3, 70, 118);
+  border-bottom: 2px solid rgb(13, 33, 71);
+}
+
+.logo {
+  display: inline-block;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: aliceblue;
+  font-size: 1.5rem;
+  margin-left: 0.3rem;
+}
+
+.select {
+  display: inline-block;
 }

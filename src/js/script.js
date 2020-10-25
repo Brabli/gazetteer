@@ -18,6 +18,7 @@ const map = L.map('map', {
   minZoom: 1.5,
   maxBoundsViscosity: 0.5,
   attributionControl: false,
+  zoomControl: false
   //worldCopyJump: true
 })
 .fitWorld();
@@ -34,8 +35,11 @@ const layerControl = L.control.layers(basemaps, overlays, {
 })
   .addTo(map);
   
-
-L.control.scale().addTo(map);
+// Scale
+L.control.scale({
+  position: "topleft",
+  maxWidth: 200
+}).addTo(map);
 
 // Fly to Location Button
 L.easyButton('fa-bullseye', function() {
@@ -45,14 +49,14 @@ L.easyButton('fa-bullseye', function() {
       map.flyTo(new L.LatLng(loc.coords.latitude, loc.coords.longitude), 16);
     });
   }
-}, "Fly to Current Location")
+}, "Fly to Current Location", {position: "topright"})
   .addTo(map);
 
 // Centre Map Button
 L.easyButton('fa-expand', function() {
   teleport(map);
   map.flyTo(new L.LatLng(45, -5), 2);
-}, "Centre Map")
+}, "Centre Map", {position: "topright"})
   .addTo(map);
 
 // Attribution Toggle
@@ -61,7 +65,8 @@ const attControl = L.control.attribution();
 L.easyButton("fa-quote-left", () => {
   attributionToggle ? attControl.addTo(map) : attControl.remove(map);
   attributionToggle = !attributionToggle;
-}, "Toggle Attributions").addTo(map);
+}, "Toggle Attributions", {position: "topright"})
+.addTo(map);
 
 
 //<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>
