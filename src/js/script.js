@@ -16,66 +16,76 @@ const map = L.map('map', {
   maxBounds: [[-85, -Infinity], [85, Infinity]],
   maxZoom: 17,
   minZoom: 1.5,
-  maxBoundsViscosity: 0.5,
+  maxBoundsViscosity: 1.0,
   attributionControl: false,
   zoomControl: false
-  //worldCopyJump: true
-})
-.fitWorld();
+}).fitWorld();
 
 // Add initial basemap tiles
 basemaps.World.addTo(map);
 
-
 // Layer Control
 const layerControl = L.control.layers(basemaps, overlays, {
   collapsed: true
-})
-  .addTo(map);
+});
   
-// Scale
-L.control.scale({
+// Scale Control
+const scaleControl = L.control.scale({
   position: "topleft",
   maxWidth: 200
-}).addTo(map);
+});
 
-// Fly to Location Button
-L.easyButton('fa-bullseye', function() {
+// Fly to Location Control
+const flyToLocationControl = L.easyButton('fa-bullseye', () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(loc => {
       teleport(map);
       map.flyTo(new L.LatLng(loc.coords.latitude, loc.coords.longitude), 16);
     });
   }
-}, "Fly to Current Location", {position: "topright"})
-  .addTo(map);
+}, "Fly to Current Location", {position: "topright"});
 
-// Centre Map Button
-L.easyButton('fa-expand', function() {
+// Centre Map Control
+const centreMapControl = L.easyButton('fa-expand', () => {
   teleport(map);
   map.flyTo(new L.LatLng(45, -5), 2);
-}, "Centre Map", {position: "topright"})
-  .addTo(map);
-
-// Attribution Toggle
-let attributionToggle = true;
-const attControl = L.control.attribution();
-L.easyButton("fa-quote-left", () => {
-  attributionToggle ? attControl.addTo(map) : attControl.remove(map);
-  attributionToggle = !attributionToggle;
-}, "Toggle Attributions", {position: "topright"})
-.addTo(map);
+}, "Centre Map", {position: "topright"});
 
 
- // Adds a close button to layer control
- $(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
- $("#layer-control-close-button").on("click", () => {
-   layerControl.collapse();
- });
+// Attribution Toggle Control
+const attributionToggleControl = L.easyButton("fa-quote-left", (() => {
+  let attributionToggle = true;
+  let attControl = L.control.attribution({prefix: ""});
+  let timesToggled = 0;
+  function toggle() {
+    attributionToggle ? attControl.addTo(map) : attControl.remove(map);
+    attributionToggle = !attributionToggle;
+    timesToggled++;
+    // You found the Easter Egg code, well done you!
+    if (timesToggled === 20) attControl = L.control.attribution({
+      prefix: "Pre-order Crescent Moon: The Game today for exclusive DLC, artwork and more!"
+    });
+  }
+  return toggle;
+})(), "Toggle Attributions", {position: "topright"});
+
+// Add controls to map
+layerControl.addTo(map);
+scaleControl.addTo(map);
+flyToLocationControl.addTo(map);
+centreMapControl.addTo(map);
+attributionToggleControl.addTo(map);
+
+
+// Adds a close button to layer control. It's hacky but it works.
+// Close button stolen from popup close button
+$(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
+$("#layer-control-close-button").on("click", () => {
+  layerControl.collapse();
+});
 
 
 
-let loadingIcons = false;
 let loadingBorders = false;
 // Stops mouse bouncing in chrome
 let lastClick = 0;
@@ -83,15 +93,20 @@ const delay = 5;
 
 /* MAIN CLICK HANDLER */
 map.on("click", async e => {
+
+  console.log("Click!");
+  console.log("loading borders: " + loadingBorders);
+
  if (loadingBorders) {
    return;
  }
 
- //loading = true;
  if (lastClick >= (Date.now() - delay))
    return;
  lastClick = Date.now();
+
  loadingBorders = true;
+
  // Remove border and marker layers
  map.eachLayer(layer => {
    if (!layer._url) map.removeLayer(layer);
@@ -103,7 +118,7 @@ map.on("click", async e => {
  const countryRes = await fetch(`php/getCountryBorders.php?lat=${lat}&long=${lng}`);
  const countryJson = await countryRes.json();
  
-
+ loadingBorders = false;
  // Return out of func if over ocean
  if (countryJson.message !== "ok") {
    console.log(countryJson.message);
@@ -121,9 +136,8 @@ map.on("click", async e => {
 
 
 
- loadingBorders = false;
+
  /* Fetch City Info */
- loadingIcons = true;
  const cityInfo = await fetch(`php/getCityInfo.php?iso2=${countryJson.data.iso2}`);
  const cityInfoJson = await cityInfo.json();
 
@@ -139,7 +153,6 @@ map.on("click", async e => {
    // Own func
    const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
    const weather = await weatherInfo.json();
-   console.log(weather);
 
    const cityMarker = L.marker([city.lat, city.long], {
      icon: city.isCapital ? icon("red") : icon("blue")
@@ -195,5 +208,4 @@ map.on("click", async e => {
    cityMarker.addTo(map);
  }
 
- loadingIcons = false;
 });
