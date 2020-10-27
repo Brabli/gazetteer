@@ -209,3 +209,11 @@ map.on("click", async e => {
  }
 
 });
+
+const $lat = $("#lat");
+const $long = $("#long");
+map.on("move", () => {
+  const centre = map.getCenter();
+  $lat.text("Lat: " + centre["lat"]);
+  $long.text("Long: " + centre["lng"]);
+})

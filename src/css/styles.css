@@ -34,12 +34,19 @@ img {
 
 
 #navbar {
-  position: relative;
-  z-index: 1;
+
   height: 2.4rem;
   min-height: 20px;
   background-color: rgb(3, 70, 118);
   border-bottom: 2px solid rgb(13, 33, 71);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+.flex-item {
+  margin-right: 10vw;
 }
 
 .logo {
@@ -52,4 +59,10 @@ img {
 
 .select {
   display: inline-block;
+}
+
+#lat-long {
+  float: left;
+  flex-direction: column;
+  font-size: 0.6rem;
 }

@@ -11,12 +11,29 @@
     <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
     <link rel="stylesheet" href="css/styles.css" />
-    <!-- Link to a favicon here -->
+    <!-- TODO Link to a favicon here -->
   </head>
   <body>
+    <!-- Navbar -->
     <div id="navbar">
-      <h1 class="logo"><span class="larger">G</span><span class="underline">azeteer</span></h1>
-      <select class="select" placeholder="Select a country...">Select Country...</select>
+      <div class="flex-item">
+      <h1 class="logo">
+        <span>G</span><span class="underline">azeteer</span>
+      </h1>
+      </div>
+      <div class="flex-item">
+      <select id="country-select">
+        <option selected>Choose a Country...</option>
+        <!-- <?php
+        echo "<option>COuntry sdijaosja</option>"
+        ?> -->
+      </select>
+    </div>
+
+      <div id="lat-long" class="flex-item">
+        <p id="lat">Lat: 11.292928291283192383</p>
+        <p id="long">Long: </p>
+      </div>
     </div>
     <!-- Map -->
     <div id="map"></div>
