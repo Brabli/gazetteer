@@ -29,5 +29,10 @@ function teleport(map) {
   }
 }
 
+function removeLayers(map) {
+  map.eachLayer(layer => {
+    if (!layer._url) map.removeLayer(layer);
+  });
+}
 
-export { correctLongitude, icon, teleport };
+export { correctLongitude, icon, teleport, removeLayers };

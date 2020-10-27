@@ -1,6 +1,6 @@
 // Module imports
 import { basemaps, overlays } from "./tiles.js";
-import { correctLongitude, icon, teleport } from "./helpers.js";
+import { correctLongitude, icon, teleport, removeLayers } from "./helpers.js";
 
 // These override some settings that allow infinite horizontal scrolling possible. I didn't write them.
 const hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
@@ -76,9 +76,7 @@ flyToLocationControl.addTo(map);
 centreMapControl.addTo(map);
 attributionToggleControl.addTo(map);
 
-
 // Adds a close button to layer control. It's hacky but it works.
-// Close button stolen from popup close button
 $(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
 $("#layer-control-close-button").on("click", () => {
   layerControl.collapse();
@@ -87,13 +85,14 @@ $("#layer-control-close-button").on("click", () => {
 
 
 let loadingBorders = false;
+let loadingCities = false;
 // Stops mouse bouncing in chrome
 let lastClick = 0;
 const delay = 5;
 
 /* MAIN CLICK HANDLER */
 map.on("click", async e => {
-
+  loadingCities = false;
   console.log("Click!");
   console.log("loading borders: " + loadingBorders);
 
@@ -108,9 +107,7 @@ map.on("click", async e => {
  loadingBorders = true;
 
  // Remove border and marker layers
- map.eachLayer(layer => {
-   if (!layer._url) map.removeLayer(layer);
- });
+ removeLayers(map);
 
  // Fetch Country Info 
  const lat = e.latlng["lat"];
@@ -131,12 +128,13 @@ map.on("click", async e => {
  // Add border to map and fit it on screen.
  // Acts funky if borders cross antimeridian line.
  const geojsonFeature = L.geoJson(countryJson.geojson);
+ removeLayers(map);
  geojsonFeature.addTo(map);
  map.fitBounds(geojsonFeature.getBounds());
 
 
 
-
+ loadingCities = true;
  /* Fetch City Info */
  const cityInfo = await fetch(`php/getCityInfo.php?iso2=${countryJson.data.iso2}`);
  const cityInfoJson = await cityInfo.json();
@@ -151,6 +149,7 @@ map.on("click", async e => {
    }
 
    // Own func
+   
    const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
    const weather = await weatherInfo.json();
 
@@ -206,10 +205,14 @@ map.on("click", async e => {
    // end func here
 
    cityMarker.addTo(map);
+
+   loadingCities = false;
  }
 
 });
 
+
+// Lat-Long Indicator Event Handler
 const $lat = $("#lat");
 const $long = $("#long");
 map.on("move", () => {
