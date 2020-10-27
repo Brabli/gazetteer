@@ -1,6 +1,7 @@
 // Module imports
 import { basemaps, overlays } from "./tiles.js";
 import { correctLongitude, icon, teleport, removeLayers } from "./helpers.js";
+import onclick from "./onclick.js";
 
 // These override some settings that allow infinite horizontal scrolling possible. I didn't write them.
 const hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
@@ -51,7 +52,6 @@ const centreMapControl = L.easyButton('fa-expand', () => {
   map.flyTo(new L.LatLng(45, -5), 2);
 }, "Centre Map", {position: "topright"});
 
-
 // Attribution Toggle Control
 const attributionToggleControl = L.easyButton("fa-quote-left", (() => {
   let attributionToggle = true;
@@ -83,136 +83,13 @@ $("#layer-control-close-button").on("click", () => {
 });
 
 
-
-let loadingBorders = false;
-let loadingCities = false;
-// Stops mouse bouncing in chrome
-let lastClick = 0;
-const delay = 5;
-
 /* MAIN CLICK HANDLER */
-map.on("click", async e => {
-  loadingCities = false;
-  console.log("Click!");
-  console.log("loading borders: " + loadingBorders);
-
- if (loadingBorders) {
-   return;
- }
-
- if (lastClick >= (Date.now() - delay))
-   return;
- lastClick = Date.now();
-
- loadingBorders = true;
-
- // Remove border and marker layers
- removeLayers(map);
-
- // Fetch Country Info 
- const lat = e.latlng["lat"];
- const lng = correctLongitude(e.latlng["lng"]);
- const countryRes = await fetch(`php/getCountryBorders.php?lat=${lat}&long=${lng}`);
- const countryJson = await countryRes.json();
- 
- loadingBorders = false;
- // Return out of func if over ocean
- if (countryJson.message !== "ok") {
-   console.log(countryJson.message);
-   return;
- }
- 
- // Teleports user to main map
- teleport(map);
-
- // Add border to map and fit it on screen.
- // Acts funky if borders cross antimeridian line.
- const geojsonFeature = L.geoJson(countryJson.geojson);
- removeLayers(map);
- geojsonFeature.addTo(map);
- map.fitBounds(geojsonFeature.getBounds());
-
-
-
- loadingCities = true;
- /* Fetch City Info */
- const cityInfo = await fetch(`php/getCityInfo.php?iso2=${countryJson.data.iso2}`);
- const cityInfoJson = await cityInfo.json();
-
- // Make markers (move to it's own func / file)
- for (const city of cityInfoJson) {
-   if (loadingBorders) {
-     map.eachLayer(layer => {
-       if (!layer._url) map.removeLayer(layer);
-     });
-     break;
-   }
-
-   // Own func
-   
-   const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
-   const weather = await weatherInfo.json();
-
-   const cityMarker = L.marker([city.lat, city.long], {
-     icon: city.isCapital ? icon("red") : icon("blue")
-   })
-   .bindPopup(`
-   <div class="city-popup" id="${city.name}">
-     <h2>${city.name}${city.isCapital ? " &#9733;" : ""
-     }</h2>
-     <h4 style="font-style: italic">${city.country} <span style="font-size: 20px; vertical-align: middle">${countryJson.data.flag}</span></h4>
-     <hr />
-     <table>
-       <tr>
-         <th>Population:</th>
-         <td>${city.population.toLocaleString()}</td>
-       </tr>
-       <tr>
-         <th>Latitude:</th>
-         <td>${city.lat}</td>
-       </tr>
-       <tr>
-         <th>Longitude:</th>
-         <td>${city.long}</td>
-       </tr>
-     </table>
-     <hr />
-     <h4>Current weather</h4>
-     <table>
-       <tr>
-         <th>Condition:</th>
-         <td>${weather.condition} <img src="${weather.iconUrl}" style="height:20px;width:20px;"/></td>
-       </tr>
-       <tr>
-         <th>Cloud Cover:</th>
-         <td>${weather.cloudCover}%</td>
-       </tr>  
-       <tr>
-         <th>Temperature:</th>
-         <td>${weather.temp}&#8451;</td>
-       </tr>
-       <tr>
-         <th>Humidity:</th>
-         <td>${weather.humidity}%</td>
-       </tr>
-       <tr>
-         <th>Wind:</th>
-         <td>${weather.windSpeed}mph (${weather.windStatement})</td>
-     </tr>      
-     </table>
-   </div>
-   `);
-   // end func here
-
-   cityMarker.addTo(map);
-
-   loadingCities = false;
- }
-
+map.on("click", e => {
+  onclick(e, map)
 });
 
 
-// Lat-Long Indicator Event Handler
+/* MAP DRAG HANDLER */
 const $lat = $("#lat");
 const $long = $("#long");
 map.on("move", () => {

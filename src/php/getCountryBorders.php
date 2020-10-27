@@ -13,11 +13,17 @@
     exit();
   }
 
-  // Init vars for cURL call
-  $lat = $_GET["lat"];
-  $long = $_GET["long"];
   $api_key = "e539d459f1b045d3bb39f2cd1570aa9f";
-  $opencage_url = "https://api.opencagedata.com/geocode/v1/json?q=" . $lat . "," . $long . "&key=" . $api_key;
+
+  // Init vars for cURL call
+  if (array_key_exists("code", $_GET)) {
+    $country_code = $_GET["code"];
+    $opencage_url = "https://api.opencagedata.com/geocode/v1/json?q=" . $country_code . "&key=" . $api_key;
+  } else {
+    $lat = $_GET["lat"];
+    $long = $_GET["long"];
+    $opencage_url = "https://api.opencagedata.com/geocode/v1/json?q=" . $lat . "," . $long . "&key=" . $api_key;
+  }
 
   // cURL to get country info from opencage
   $curl_opencage = curl_init();

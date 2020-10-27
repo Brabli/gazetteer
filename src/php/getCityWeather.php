@@ -7,7 +7,8 @@
   $city = $_GET["city"];
   $api_key = "5ef63273faed449d6aa6767c0b02c334";
   
-  $openweather_url = "api.openweathermap.org/data/2.5/weather?q=" . $city . "&appid=" . $api_key . "&units=metric";
+  $openweather_url = "api.openweathermap.org/data/2.5/weather?q=" . strtolower($city) . "&appid=" . $api_key;
+  // . "&units=metric";
 
   // cURL to get weather info
   $curl_weather = curl_init();
@@ -78,7 +79,7 @@
       break;
   }
   $response["apiUrl"] = $openweather_url;
+
   header('Content-type: application/json');
   echo json_encode($response);
-
 ?>
