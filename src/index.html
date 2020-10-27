@@ -17,26 +17,32 @@
     <!-- Navbar -->
     <div id="navbar">
       <div class="flex-item">
-      <h1 class="logo">
-        <span>G</span><span class="underline">azeteer</span>
-      </h1>
+        <h1 class="logo">
+          <span>G</span><span class="underline">azeteer</span>
+        </h1>
+        <div class="load-container">
+          <div class="loader"></div>
+        </div>
       </div>
+
       <div class="flex-item">
-      <select id="country-select">
-        <option selected>Choose a Country...</option>
+        <select id="country-select">
+          <option selected>Choose a Country...</option>
         <!-- <?php
         echo "<option>COuntry sdijaosja</option>"
         ?> -->
-      </select>
-    </div>
-
-      <div id="lat-long" class="flex-item">
-        <p id="lat">Lat: 11.292928291283192383</p>
-        <p id="long">Long: </p>
+        </select>
       </div>
     </div>
     <!-- Map -->
     <div id="map"></div>
+    <div class="shadow"></div>
+
+    <div id="lat-long">
+      <p id="lat">Lat: 11.292928291283192383</p>
+      <p id="long">Long: 11.292928291283192383</p>
+    </div>
+
     <!-- Scripts -->
     <script type="application/javascript" src="js/vendors/leaflet/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
