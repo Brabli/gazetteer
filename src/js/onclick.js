@@ -49,6 +49,8 @@ async function onclick(e, map, countryCode = undefined) {
     const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
     const weather = await weatherInfo.json();
     
+    if (weather.status !== "ok") continue;
+
     const cityMarker = L.marker([city.lat, city.long], {
       icon: city.isCapital ? icon("red") : icon("blue")
     })

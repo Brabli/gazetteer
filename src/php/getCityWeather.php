@@ -20,6 +20,15 @@
 
   $decoded = json_decode($result, true);
   
+  // Error handing
+  if (!(array_key_exists("cod", $decoded) && $decoded["cod"] === 200)) {
+    $response["status"] = "error";
+    echo json_encode($response);
+    exit();
+  }
+
+
+  $response["status"] = "ok";
   $response["condition"] = ucwords($decoded["weather"][0]["description"]);
   
   $response["iconUrl"] = "http://openweathermap.org/img/wn/" . $decoded["weather"][0]["icon"] . "@2x.png";

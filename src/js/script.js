@@ -83,9 +83,19 @@ $("#layer-control-close-button").on("click", () => {
 });
 
 
+let loading = false;
+
 /* MAIN CLICK HANDLER */
-map.on("click", e => {
-  onclick(e, map)
+map.on("click", async e => {
+
+  if (loading) return;
+  loading = true;
+  $(".loader").toggle();
+
+  await onclick(e, map);
+
+  $(".loader").toggle();
+  loading = false;
 });
 
 
@@ -96,4 +106,22 @@ map.on("move", () => {
   const centre = map.getCenter();
   $lat.text("Lat: " + centre["lat"]);
   $long.text("Long: " + centre["lng"]);
+})
+
+/* SELECT HANDLER */
+$("#country-select").on("change", async e => {
+  console.log("Change");
+  const val = $("#country-select option:selected").val();
+  console.log(val);
+  if (val !== "default" && !loading) {
+
+    loading = true;
+    $(".loader").toggle();
+    await onclick(null, map, val);
+
+    loading = false;
+    $(".loader").toggle();
+  } else {
+    return;
+  }
 })

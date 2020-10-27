@@ -33,11 +33,10 @@ img {
 }
 
 .shadow {
-  height: 2.5rem;
-  top: 0;
+  height: 0;
+  top: 2.5rem;
   position: absolute;
-  width: 100vw;
-  z-index: 1;
+  width: 110vw;
   -webkit-box-shadow: 0px 3px 12px 0px rgba(0,0,0,0.75);
   -moz-box-shadow: 0px 3px 12px 0px rgba(0,0,0,0.75);
   box-shadow: 0px 3px 12px 0px rgba(0,0,0,0.75);
@@ -46,10 +45,10 @@ img {
 #navbar {
   z-index: 2;
   height: 2.5rem;
-  min-height: 40px;
+  min-height: 2.5rem;
   /* background-color: rgb(3, 70, 118); */
   background: rgb(0,55,92);
-background: linear-gradient(0deg, rgba(0,55,92,1) 33%, rgba(3,70,118,1) 100%);
+  background: linear-gradient(0deg, rgba(0,55,92,1) 33%, rgba(3,70,118,1) 100%);
   border-bottom: 2px solid rgb(13, 33, 71);
   display: flex;
   justify-content: space-between;
@@ -87,6 +86,7 @@ background: linear-gradient(0deg, rgba(0,55,92,1) 33%, rgba(3,70,118,1) 100%);
 }
 
 .loader {
+  display: none;
   border: 0.15rem solid #f3f3f3; /* Light grey */
   border-top: 0.15rem solid #3498db; /* Blue */
   border-radius: 50%;
