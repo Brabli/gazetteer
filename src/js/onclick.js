@@ -56,11 +56,16 @@ async function onclick(e, map, countryCode = undefined) {
     })
     .bindPopup(`
     <div class="city-popup" id="${city.name}">
-      <h2>${city.name}${city.isCapital ? " &#9733;" : ""
-      }</h2>
-      <h4 style="font-style: italic">${city.country} <span style="font-size: 20px; vertical-align: middle">${countryJson.data.flag}</span></h4>
+      <h2 class="city-name">${city.name}${city.isCapital ? " &#9733;" : ""}</h2>
+      <div class="center">
+        <h4 class="city-country-name">${city.country}</h4>
+        <span class="flag">${countryJson.data.flag}</span>
+      </div>
+
+     
+
       <hr />
-      <table>
+      <table class="quick-info-table">
         <tr>
           <th>Population:</th>
           <td>${city.population.toLocaleString()}</td>
@@ -75,11 +80,11 @@ async function onclick(e, map, countryCode = undefined) {
         </tr>
       </table>
       <hr />
-      <h4>Current weather</h4>
-      <table>
+      <h4 class="weather-title">Local Weather</h4>
+      <table class="weather-table">
         <tr>
           <th>Condition:</th>
-          <td>${weather.condition} <img src="${weather.iconUrl}" style="height:20px;width:20px;"/></td>
+          <td>${weather.condition}</td>
         </tr>
         <tr>
           <th>Cloud Cover:</th>
@@ -94,8 +99,8 @@ async function onclick(e, map, countryCode = undefined) {
           <td>${weather.humidity}%</td>
         </tr>
         <tr>
-          <th>Wind:</th>
-          <td>${weather.windSpeed}mph (${weather.windStatement})</td>
+          <th>Wind Speed:</th>
+          <td>${weather.windSpeed}mph - ${weather.windStatement}</td>
       </tr>      
       </table>
     </div>
