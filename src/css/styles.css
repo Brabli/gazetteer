@@ -53,6 +53,7 @@ img {
   display: flex;
   justify-content: space-between;
   align-items: center;
+ 
   /* -webkit-box-shadow: 0px 3px 12px 0px rgba(0,0,0,0.75);
   -moz-box-shadow: 0px 3px 12px 0px rgba(0,0,0,0.75);
   box-shadow: 0px 3px 12px 0px rgba(0,0,0,0.75); */
@@ -114,13 +115,14 @@ img {
   text-align: center;
   font-weight: bold;
   position: relative;
-  top: 0.5rem;
+  top: 0.3rem;
 }
 
 .city-country-name {
   text-align: center;
   font-style: italic;
   display: inline;
+  
 }
 
 .city-popup hr {
@@ -128,10 +130,12 @@ img {
   margin: 0.3rem 0;
   margin: 0 auto;
 }
+
 .center {
   text-align: center;
-  margin: 0 auto;
+  margin: 0.3rem auto;
   display: block;
+  line-height: 0.7;
 }
 
 .flag {
@@ -161,4 +165,8 @@ img {
 .weather-table td {
   text-align: center;
   border: 1px solid black;
+}
+
+#country-select {
+  width: 10rem;
 }

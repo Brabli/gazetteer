@@ -61,9 +61,6 @@ async function onclick(e, map, countryCode = undefined) {
         <h4 class="city-country-name">${city.country}</h4>
         <span class="flag">${countryJson.data.flag}</span>
       </div>
-
-     
-
       <hr />
       <table class="quick-info-table">
         <tr>

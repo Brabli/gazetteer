@@ -98,18 +98,33 @@ map.on("click", async e => {
   loading = false;
 });
 
+// Decided not to include this as I couldn't get it to look good onscreen.
+/* LAT LONG DISPLAY HANDLER */
+// const $lat = $("#lat");
+// const $long = $("#long");
+// map.on("move", () => {
+//   const centre = map.getCenter();
+//   $lat.text("Lat: " + centre["lat"]);
+//   $long.text("Long: " + centre["lng"]);
+// })
 
-/* MAP DRAG HANDLER */
-const $lat = $("#lat");
-const $long = $("#long");
-map.on("move", () => {
-  const centre = map.getCenter();
-  $lat.text("Lat: " + centre["lat"]);
-  $long.text("Long: " + centre["lng"]);
-})
+
+// move to helpers
+/* Populate Country Select */
+async function populateSelect() {
+  const $countrySelect = $("#country-select");
+  const countryOptions = await fetch("php/getCountryOptions.php");
+  const countryOptionsJson = await countryOptions.json();
+  for (const [iso2, country] of Object.entries(countryOptionsJson)) {
+    console.log(`${iso2}, ${country}`);
+    $countrySelect.append(`<option value="${iso2}">${country}</option>`);
+  }
+}
+
+populateSelect();
 
 /* SELECT HANDLER */
-$("#country-select").on("change", async e => {
+$("#country-select").on("change", async () => {
   console.log("Change");
   const val = $("#country-select option:selected").val();
   console.log(val);

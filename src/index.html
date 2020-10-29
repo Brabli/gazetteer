@@ -16,24 +16,22 @@
   <body>
     <!-- Navbar -->
     <div id="navbar">
+
+      <!-- Logo and Loader Container-->
       <div class="flex-item">
+        <!-- Logo -->
         <h1 class="logo">
-          <span>G</span><span class="underline">azeteer</span>
+          G<span class="underline">azeteer</span>
         </h1>
+        <!-- Loader -->
         <div class="load-container">
           <div class="loader"></div>
         </div>
       </div>
-
+      <!-- Country Select -->
       <div class="flex-item">
         <select id="country-select">
           <option value="default" selected>Choose a Country...</option>
-          <option value="gb">United Kingdom</option>
-          <option value="us">United States of America</option>
-
-        <!-- <?php
-        echo "<option>COuntry sdijaosja</option>"
-        ?> -->
         </select>
       </div>
     </div>
@@ -41,10 +39,11 @@
     <div id="map"></div>
     <div class="shadow"></div>
 
-    <div id="lat-long">
+    <!-- Decided not to use -->
+    <!-- <div id="lat-long">
       <p id="lat">Lat: 11.292928291283192383</p>
       <p id="long">Long: 11.292928291283192383</p>
-    </div>
+    </div> -->
 
     <!-- Scripts -->
     <script type="application/javascript" src="js/vendors/leaflet/leaflet.js"></script>
