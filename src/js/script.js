@@ -1,7 +1,7 @@
 // Module imports
 import { basemaps, overlays } from "./tiles.js";
-import { correctLongitude, icon, teleport, removeLayers } from "./helpers.js";
-import onclick from "./onclick.js";
+import { correctLongitude, icon, teleport, removeLayers, populateSelect } from "./helpers.js";
+import { fetchGeojson, addGeojsonToMap, addCityMarkers } from "./onclick.js";
 
 // These override some settings that allow infinite horizontal scrolling possible. I didn't write them.
 const hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
@@ -76,6 +76,9 @@ flyToLocationControl.addTo(map);
 centreMapControl.addTo(map);
 attributionToggleControl.addTo(map);
 
+// Populate country select
+populateSelect();
+
 // Adds a close button to layer control. It's hacky but it works.
 $(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
 $("#layer-control-close-button").on("click", () => {
@@ -84,59 +87,54 @@ $("#layer-control-close-button").on("click", () => {
 
 
 let loading = false;
-
 /* MAIN CLICK HANDLER */
 map.on("click", async e => {
-
+  console.log("CLICK");
   if (loading) return;
+
   loading = true;
   $(".loader").toggle();
 
-  await onclick(e, map);
+  removeLayers(map);
+  const geojsonAndInfo = await fetchGeojson(e);
+
+  // Early return if response is not ok, EG if click is over an ocean.
+  if (geojsonAndInfo.message !== "ok") {
+    console.log(geojsonAndInfo.message);
+  } else {
+    teleport(map);
+    addGeojsonToMap(geojsonAndInfo.geojson, map);
+    await addCityMarkers(geojsonAndInfo.data.iso2, geojsonAndInfo.data.flag, map);
+  }
 
   $(".loader").toggle();
   loading = false;
 });
 
-// Decided not to include this as I couldn't get it to look good onscreen.
-/* LAT LONG DISPLAY HANDLER */
-// const $lat = $("#lat");
-// const $long = $("#long");
-// map.on("move", () => {
-//   const centre = map.getCenter();
-//   $lat.text("Lat: " + centre["lat"]);
-//   $long.text("Long: " + centre["lng"]);
-// })
-
-
-// move to helpers
-/* Populate Country Select */
-async function populateSelect() {
-  const $countrySelect = $("#country-select");
-  const countryOptions = await fetch("php/getCountryOptions.php");
-  const countryOptionsJson = await countryOptions.json();
-  for (const [iso2, country] of Object.entries(countryOptionsJson)) {
-    console.log(`${iso2}, ${country}`);
-    $countrySelect.append(`<option value="${iso2}">${country}</option>`);
-  }
-}
-
-populateSelect();
 
 /* SELECT HANDLER */
 $("#country-select").on("change", async () => {
-  console.log("Change");
-  const val = $("#country-select option:selected").val();
-  console.log(val);
-  if (val !== "default" && !loading) {
+  const iso2 = $("#country-select option:selected").val();
 
-    loading = true;
-    $(".loader").toggle();
-    await onclick(null, map, val);
+  if (iso2 !== "default" && !loading) {
 
-    loading = false;
-    $(".loader").toggle();
+  loading = true;
+  $(".loader").toggle();
+
+  removeLayers(map);
+  const geojsonAndInfo = await fetchGeojson(null, iso2);
+
+  // Early return if response is not ok, EG if click is over an ocean.
+  if (geojsonAndInfo.message !== "ok") {
+    console.log(geojsonAndInfo.message);
   } else {
-    return;
+    teleport(map);
+    addGeojsonToMap(geojsonAndInfo.geojson, map);
+    await addCityMarkers(geojsonAndInfo.data.iso2, geojsonAndInfo.data.flag, map);
   }
-})
+
+  $(".loader").toggle();
+  loading = false;
+
+  }
+});

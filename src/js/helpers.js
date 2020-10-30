@@ -29,10 +29,21 @@ function teleport(map) {
   }
 }
 
+// Removes all layers from map except tile layers
 function removeLayers(map) {
   map.eachLayer(layer => {
     if (!layer._url) map.removeLayer(layer);
   });
 }
 
-export { correctLongitude, icon, teleport, removeLayers };
+/* Populate Country Select */
+async function populateSelect() {
+  const $countrySelect = $("#country-select");
+  const countryOptions = await fetch("php/getCountryOptions.php");
+  const countryOptionsJson = await countryOptions.json();
+  for (const [iso2, country] of Object.entries(countryOptionsJson)) {
+    $countrySelect.append(`<option value="${iso2}">${country}</option>`);
+  }
+}
+
+export { correctLongitude, icon, teleport, removeLayers, populateSelect };

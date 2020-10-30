@@ -1,65 +1,60 @@
-import { correctLongitude, icon, teleport, removeLayers } from "./helpers.js";
+import { correctLongitude, icon } from "./helpers.js";
 
-// MAIN CLICK HANDLER
-async function onclick(e, map, countryCode = undefined) {
-
-  // Remove border and marker layers
-  removeLayers(map);
-
-  let countryJson;
-
+/* Fetch Geojson */
+// This also fetches some other country data, EG flag and iso2
+async function fetchGeojson(e, countryCode = undefined) {
+  // Init vars
+  let countryJson, countryRes;
+  // If no country code provided find country based on click event's lat/long.
   if (!countryCode) {
-    // Find long and lat of click location
     const lat = e.latlng["lat"];
     const lng = correctLongitude(e.latlng["lng"]);
-    // Fetch Country Info 
-    const countryRes = await fetch(`php/getCountryBorders.php?lat=${lat}&long=${lng}`);
-    countryJson = await countryRes.json();
+    countryRes = await fetch(`php/getCountryBorders.php?lat=${lat}&long=${lng}`);
+  // Otherwise look up country with iso2. Used by Select Country dropdown.
   } else {
-    const countryRes = await fetch(`php/getCountryBorders.php?code=${countryCode}`);
-    countryJson = await countryRes.json();
+    countryRes = await fetch(`php/getCountryBorders.php?code=${countryCode}`);
   }
-  // Return out of func if response is not ok
-  if (countryJson.message !== "ok") {
-    console.log(countryJson.message);
-    return;
-  }
+  // Parse and return response
+  countryJson = await countryRes.json();
+  return countryJson;
+}
 
-  // Teleports user to main map
-  teleport(map);
-
-  // Add border to map and fit it on screen.
-  // Acts funky if borders cross antimeridian line.
-  const geojsonFeature = L.geoJson(countryJson.geojson);
-  removeLayers(map);
+/* Add geojson to map and fit to screen. */
+function addGeojsonToMap(geojson, map) {
+  const geojsonFeature = L.geoJson(geojson);
   geojsonFeature.addTo(map);
   map.fitBounds(geojsonFeature.getBounds());
+}
 
 
-
+/* Add city markers to map */
+async function addCityMarkers(iso2, flag, map) {
 
   /* Fetch City Info */
-  const cityInfo = await fetch(`php/getCityInfo.php?iso2=${countryJson.data.iso2}`);
+  const cityInfo = await fetch(`php/getCityInfo.php?iso2=${iso2}`);
   const cityInfoJson = await cityInfo.json();
-
+  console.log(cityInfoJson);
+  // use .map() and promiseAll to speed this up?
   // Make markers (move to it's own func / file)
-  for (const city of cityInfoJson) {
+  console.time("a");
+  await Promise.all(
+  cityInfoJson.map(async city => {
    
-    // Own func
     const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
     const weather = await weatherInfo.json();
     
-    if (weather.status !== "ok") continue;
+    if (weather.status !== "ok") return false;
 
     const cityMarker = L.marker([city.lat, city.long], {
       icon: city.isCapital ? icon("red") : icon("blue")
     })
+
     .bindPopup(`
     <div class="city-popup" id="${city.name}">
       <h2 class="city-name">${city.name}${city.isCapital ? " &#9733;" : ""}</h2>
       <div class="center">
         <h4 class="city-country-name">${city.country}</h4>
-        <span class="flag">${countryJson.data.flag}</span>
+        <span class="flag">${flag}</span>
       </div>
       <hr />
       <table class="quick-info-table">
@@ -102,10 +97,10 @@ async function onclick(e, map, countryCode = undefined) {
       </table>
     </div>
     `);
-    // end func here
-
     cityMarker.addTo(map);
- }
+ })
+);
+ console.timeEnd("a");
 }
 
-export default onclick;
+export { fetchGeojson, addGeojsonToMap, addCityMarkers };

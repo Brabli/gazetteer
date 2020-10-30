@@ -170,3 +170,19 @@ img {
 #country-select {
   width: 10rem;
 }
+
+#modal-box {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 300px;
+  height: 200px;
+  display: block;
+  margin: 0 auto;
+  
+  background-color: snow;
+  opacity: 0.8;
+  border: 2px solid black;
+  border-radius: 5%;
+  position: relative;
+  z-index: 4;
+  top: 56vh;
+}
