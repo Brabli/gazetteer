@@ -1,4 +1,5 @@
 // Returns a coloured marker icon.
+// TODO: This is slow, refactor to make it faster
 // Possible colours: green grey violet yellow orange blue red green gold
 function icon(colour) {
   return new L.Icon({
@@ -36,7 +37,7 @@ function removeLayers(map) {
   });
 }
 
-/* Populate Country Select */
+// Populate Country Select
 async function populateSelect() {
   const $countrySelect = $("#country-select");
   const countryOptions = await fetch("php/getCountryOptions.php");

@@ -27,14 +27,45 @@ function addGeojsonToMap(geojson, map) {
 }
 
 
+/* Fetch actual country info */
+async function getCountryInfo(data) {
+  const res = await fetch(`php/getCountryInfo.php?iso2=${data.iso2}`);
+  const resJson = await res.json();
+  $("#info-country").html(`${data["countryName"]}<img id="info-flag" src=${resJson.flag} />`);
+  $("#info-cont").html(resJson["region"]);
+  $("#info-pop").html(resJson["population"].toLocaleString());
+  $("#info-cap").html(resJson["capital"]);
+
+  // Rounds lat / long. parseFloat() removes any trailing zeroes from toFixed().
+  const lat = parseFloat(resJson["latlng"][0].toFixed(4)) + "°";
+  const lng = parseFloat(resJson["latlng"][1].toFixed(4)) + "°";
+
+  $("#info-coords").html(lat + ", " + lng);
+  // If no symbol associated with currency just display currency name
+  if (resJson["currencies"][0]["symbol"] === undefined) {
+    $("#info-currency").html(resJson["currencies"][0]["name"]);
+  } else {
+    $("#info-currency").html(resJson["currencies"][0]["name"] + " ( " + resJson["currencies"][0]["symbol"] + " )");
+  }
+  $("#info-lan").html(resJson["languages"][0]["name"]);
+  $("#info-link").html(`<a href="${data.wikiLink}" target="_blank">Click to open Wikipedia page in new tab</a>`);
+}
+
+
+
+
+
+
+
+
 /* Add city markers to map */
 async function addCityMarkers(iso2, flag, map) {
 
-  /* Fetch City Info */
+  // Fetch City Info
   const cityInfo = await fetch(`php/getCityInfo.php?iso2=${iso2}`);
   const cityInfoJson = await cityInfo.json();
   console.log(cityInfoJson);
-  // use .map() and promiseAll to speed this up?
+
   // Make markers (move to it's own func / file)
   console.time("a");
   await Promise.all(
@@ -100,7 +131,6 @@ async function addCityMarkers(iso2, flag, map) {
     cityMarker.addTo(map);
  })
 );
- console.timeEnd("a");
 }
 
-export { fetchGeojson, addGeojsonToMap, addCityMarkers };
+export { fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo };

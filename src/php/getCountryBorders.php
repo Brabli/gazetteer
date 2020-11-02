@@ -13,6 +13,10 @@
     exit();
   }
 
+
+  // example url:
+  // https://api.opencagedata.com/geocode/v1/json?q=al&key=e539d459f1b045d3bb39f2cd1570aa9f&countrycode=al&limit=1
+
   $api_key = "e539d459f1b045d3bb39f2cd1570aa9f";
 
   // Init vars for cURL call

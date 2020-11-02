@@ -1,7 +1,7 @@
 // Module imports
 import { basemaps, overlays } from "./tiles.js";
 import { correctLongitude, icon, teleport, removeLayers, populateSelect } from "./helpers.js";
-import { fetchGeojson, addGeojsonToMap, addCityMarkers } from "./onclick.js";
+import { fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo } from "./onclick.js";
 
 // These override some settings that allow infinite horizontal scrolling possible. I didn't write them.
 const hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
@@ -85,16 +85,22 @@ $("#layer-control-close-button").on("click", () => {
   layerControl.collapse();
 });
 
-
+// Global loading variable
 let loading = false;
-/* MAIN CLICK HANDLER */
+
+
+
+
+/* MOUSE CLICK HANDLER */
 map.on("click", async e => {
+
+  // Turn on loader
   console.log("CLICK");
   if (loading) return;
-
   loading = true;
   $(".loader").toggle();
 
+  // Remove layers and fetch info about where the user clicked
   removeLayers(map);
   const geojsonAndInfo = await fetchGeojson(e);
 
@@ -104,15 +110,17 @@ map.on("click", async e => {
   } else {
     teleport(map);
     addGeojsonToMap(geojsonAndInfo.geojson, map);
+    await getCountryInfo(geojsonAndInfo.data);
     await addCityMarkers(geojsonAndInfo.data.iso2, geojsonAndInfo.data.flag, map);
   }
 
+  // Turn off loader
   $(".loader").toggle();
   loading = false;
 });
 
 
-/* SELECT HANDLER */
+/* COUNTRY SELECT HANDLER */
 $("#country-select").on("change", async () => {
   const iso2 = $("#country-select option:selected").val();
 
@@ -130,6 +138,7 @@ $("#country-select").on("change", async () => {
   } else {
     teleport(map);
     addGeojsonToMap(geojsonAndInfo.geojson, map);
+    await getCountryInfo(geojsonAndInfo.data);
     await addCityMarkers(geojsonAndInfo.data.iso2, geojsonAndInfo.data.flag, map);
   }
 
