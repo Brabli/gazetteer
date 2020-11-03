@@ -45,7 +45,7 @@
   if (array_key_exists("0", $decoded["results"])) {
     $decoded = $decoded["results"]["0"];
   } else {
-    early_return("Array key 0 does not exist!");
+    early_return("No data found!");
   }
 
   // Early return if user clicked a body of water instead of a country
@@ -55,9 +55,9 @@
     early_return("Not a country!");
   }
   
-
   // Get ISO2 code
   $country_ISO2 = $decoded["components"]["ISO_3166-1_alpha-2"];
+
   // Find ISO3 code (sometimes it's not in respose JSON so we refer to a json file in country-borders that maps ISO2 codes to their ISO3 versions)
   if (array_key_exists("ISO_3166-1_alpha-3", $decoded["components"])) {
     $country_ISO3 = $decoded["components"]["ISO_3166-1_alpha-3"];
@@ -79,18 +79,9 @@
   $response["data"]["iso2"] = strtolower($country_ISO2);
   $response["data"]["flag"] = $decoded["annotations"]["flag"];
   $response["data"]["countryName"] = $decoded["components"]["country"];
-  $response["data"]["continent"] = $decoded["components"]["continent"];
+  // $response["data"]["continent"] = $decoded["components"]["continent"];
   $response["data"]["wikiLink"] = str_replace(" ","_", ("https://en.wikipedia.org/wiki/" . $response["data"]["countryName"]));
 
-
-  // Default currency to British Pound if none exists in data (For Isle of Man mainly)
-  if (array_key_exists("currency", $decoded["annotations"])) {
-    $response["data"]["currencyName"] = $decoded["annotations"]["currency"]["name"];
-    $response["data"]["currencySymbol"] = $decoded["annotations"]["currency"]["html_entity"];
-  } else {
-    $response["data"]["currencyName"] = "British Pound";
-    $response["data"]["currencySymbol"] = "&#x00A3;";
-  }
 
   // Send response
   header('Content-type: application/json');

@@ -1,6 +1,6 @@
 // Module imports
 import { basemaps, overlays } from "./tiles.js";
-import { correctLongitude, icon, teleport, removeLayers, populateSelect } from "./helpers.js";
+import { teleport, removeLayers, populateSelect } from "./helpers.js";
 import { fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo } from "./onclick.js";
 
 // These override some settings that allow infinite horizontal scrolling possible. I didn't write them.

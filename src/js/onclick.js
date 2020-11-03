@@ -1,5 +1,8 @@
 import { correctLongitude, icon } from "./helpers.js";
 
+
+
+
 /* Fetch Geojson */
 // This also fetches some other country data, EG flag and iso2
 async function fetchGeojson(e, countryCode = undefined) {
@@ -18,6 +21,7 @@ async function fetchGeojson(e, countryCode = undefined) {
   countryJson = await countryRes.json();
   return countryJson;
 }
+
 
 /* Add geojson to map and fit to screen. */
 function addGeojsonToMap(geojson, map) {
@@ -48,7 +52,7 @@ async function getCountryInfo(data) {
     $("#info-currency").html(resJson["currencies"][0]["name"] + " ( " + resJson["currencies"][0]["symbol"] + " )");
   }
   $("#info-lan").html(resJson["languages"][0]["name"]);
-  $("#info-link").html(`<a href="${data.wikiLink}" target="_blank">Click to open Wikipedia page in new tab</a>`);
+  $("#info-link").html(`<a href="${data.wikiLink}" target="_blank">Open Wikipedia page in new tab</a>`);
 }
 
 

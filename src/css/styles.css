@@ -222,7 +222,7 @@ img {
 }
 
 .content th {
-  min-width: 9rem;
+  width: 50%;
   font-style: italic;
   font-weight: normal;
 }
@@ -253,4 +253,13 @@ img {
 
 .flip {
   transform: rotate(180deg);
+}
+
+/* Changes country info box to not take up the whole of the bottom of the screen */
+@media only screen and (min-width: 430px) {
+  .content {
+    width: 320px;
+    border-right: 2px solid black;
+    border-top-right-radius: 0.5rem;
+  }
 }
