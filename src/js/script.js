@@ -33,8 +33,9 @@ const layerControl = L.control.layers(basemaps, overlays, {
 // Scale Control
 const scaleControl = L.control.scale({
   position: "topleft",
-  maxWidth: 200
+  maxWidth: 100
 });
+
 
 // Fly to Location Control
 const flyToLocationControl = L.easyButton('fa-bullseye', () => {

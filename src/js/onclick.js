@@ -29,7 +29,13 @@ async function fetchGeojson(iso3) {
     const geojson = await fetch(`php/getGeojson.php?iso3=${iso3}`);
     const geojsonParse = await geojson.json();
     const geojsonString = JSON.stringify(geojsonParse);
-    localStorage.setItem(iso3, geojsonString);
+    // Try to save geojson, if no storage available don't bother
+    try {
+      localStorage.setItem(iso3, geojsonString);
+    } catch(err) {
+      console.log(err);
+      console.log("Local Storage full!")
+    }
     return geojsonParse;
     // Otherwise return stored geojson
   } else {
@@ -81,13 +87,19 @@ async function addCityMarkers(iso2, flag, map) {
     // Fetch City Info, checks session storage first to see if cities list exists already.
     const cityInfo = await fetch(`php/getCityInfo.php?iso2=${iso2}`);
     cityInfoJson = await cityInfo.json();
-    sessionStorage.setItem(`cities_${iso2}`, JSON.stringify(cityInfoJson));
-    console.log(cityInfoJson);
+    // Storage error handling
+    try {
+      sessionStorage.setItem(`cities_${iso2}`, JSON.stringify(cityInfoJson));
+      console.log(cityInfoJson);
+    } catch(err) {
+      console.log(err);
+      console.log("Session storage full!");
+    }
   } else {
     cityInfoJson = JSON.parse(cityInfoStored);
   }
 
-  
+  // Promise all with map() instead of a loop as this makes the weather calls concurrent, thus speeding up the process of fetching the weather greatly.
   await Promise.all(
   cityInfoJson.map(async city => {
    
@@ -97,10 +109,10 @@ async function addCityMarkers(iso2, flag, map) {
     // Early return if weather is not available
     if (weather.status !== "ok") return false;
 
+    // Create markers with appropriate data and html.
     const cityMarker = L.marker([city.lat, city.long], {
       icon: city.isCapital ? icon("red") : icon("blue")
     })
-
     .bindPopup(`
     <div class="city-popup" id="${city.name}">
       <h2 class="city-name">${city.name}${city.isCapital ? " &#9733;" : ""}</h2>
@@ -149,6 +161,7 @@ async function addCityMarkers(iso2, flag, map) {
       </table>
     </div>
     `);
+    // Add marker to map once constructed
     cityMarker.addTo(map);
  })
 );
