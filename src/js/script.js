@@ -1,7 +1,7 @@
 // Module imports
 import { basemaps, overlays } from "./tiles.js";
 import { teleport, removeLayers, populateSelect } from "./helpers.js";
-import { fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo } from "./onclick.js";
+import { fetchGeojson, fetchCountry, addGeojsonToMap, addCityMarkers, getCountryInfo } from "./onclick.js";
 
 // These override some settings that allow infinite horizontal scrolling possible. I didn't write them.
 const hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
@@ -106,16 +106,18 @@ map.on("click", async e => {
 
   // Remove layers and fetch info about where the user clicked
   removeLayers(map);
-  const geojsonAndInfo = await fetchGeojson(e);
+  const countryData = await fetchCountry(e);
+
 
   // Early return if response is not ok, EG if click is over an ocean.
-  if (geojsonAndInfo.message !== "ok") {
-    console.log(geojsonAndInfo.message);
+  if (countryData.message !== "ok") {
+    console.log(countryData.message);
   } else {
+    const geojson = await fetchGeojson(countryData.data.iso3);
     teleport(map);
-    addGeojsonToMap(geojsonAndInfo.geojson, map);
-    await getCountryInfo(geojsonAndInfo.data);
-    await addCityMarkers(geojsonAndInfo.data.iso2, geojsonAndInfo.data.flag, map);
+    addGeojsonToMap(geojson, map);
+    await getCountryInfo(countryData.data);
+    await addCityMarkers(countryData.data.iso2, countryData.data.flag, map);
   }
 
   // Turn off loader

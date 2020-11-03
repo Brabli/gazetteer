@@ -1,25 +1,41 @@
 import { correctLongitude, icon } from "./helpers.js";
 
 
+/* Fetch Country */
+async function fetchCountry(e, countryCode = undefined) {
+    // Init vars
+    let countryRes;
+    // If no country code provided find country based on click event's lat/long.
+    if (!countryCode) {
+      const lat = e.latlng["lat"];
+      const lng = correctLongitude(e.latlng["lng"]);
+      countryRes = await fetch(`php/getCountry.php?lat=${lat}&long=${lng}`);
+    // Otherwise look up country with iso2. Used by Select Country dropdown.
+    } else {
+      countryRes = await fetch(`php/getCountry.php?code=${countryCode}`);
+    }
+    // Parse and return response
+    const countryData = await countryRes.json();
+    console.log(countryData);
+    return countryData;
+}
 
-
-/* Fetch Geojson */
-// This also fetches some other country data, EG flag and iso2
-async function fetchGeojson(e, countryCode = undefined) {
-  // Init vars
-  let countryJson, countryRes;
-  // If no country code provided find country based on click event's lat/long.
-  if (!countryCode) {
-    const lat = e.latlng["lat"];
-    const lng = correctLongitude(e.latlng["lng"]);
-    countryRes = await fetch(`php/getCountryBorders.php?lat=${lat}&long=${lng}`);
-  // Otherwise look up country with iso2. Used by Select Country dropdown.
+/* Fetch a country's geojson */
+async function fetchGeojson(iso3) {
+  const storedGeojson = localStorage.getItem(iso3);
+  if (!storedGeojson) {
+    console.log("Not stored");
+    // If no geojson in storage fetch geojson info from server
+    const geojson = await fetch(`php/getGeojson.php?iso3=${iso3}`);
+    const geojsonParse = await geojson.json();
+    const geojsonString = JSON.stringify(geojsonParse);
+    localStorage.setItem(iso3, geojsonString);
+    return geojsonParse;
+    // Otherwise return stored geojson
   } else {
-    countryRes = await fetch(`php/getCountryBorders.php?code=${countryCode}`);
+    console.log("Stored");
+    return JSON.parse(storedGeojson);
   }
-  // Parse and return response
-  countryJson = await countryRes.json();
-  return countryJson;
 }
 
 
@@ -70,8 +86,6 @@ async function addCityMarkers(iso2, flag, map) {
   const cityInfoJson = await cityInfo.json();
   console.log(cityInfoJson);
 
-  // Make markers (move to it's own func / file)
-  console.time("a");
   await Promise.all(
   cityInfoJson.map(async city => {
    
@@ -137,4 +151,4 @@ async function addCityMarkers(iso2, flag, map) {
 );
 }
 
-export { fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo };
+export { fetchCountry, fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo };
