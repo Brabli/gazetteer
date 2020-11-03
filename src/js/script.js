@@ -90,7 +90,6 @@ $("#layer-control-close-button").on("click", () => {
 let loading = false;
 
 
-
 //~~~~~~~~~~~~~~~~~~~~~~~~
 /* EVENT HANDLERS BELOW */
 //~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,24 +127,26 @@ map.on("click", async e => {
 
 /* COUNTRY SELECT HANDLER */
 $("#country-select").on("change", async () => {
+  // Get country selected iso2
   const iso2 = $("#country-select option:selected").val();
 
   if (iso2 !== "default" && !loading) {
-
   loading = true;
   $(".loader").toggle();
 
+  // Remove layers and fetch country info
   removeLayers(map);
-  const geojsonAndInfo = await fetchGeojson(null, iso2);
+  const countryData = await fetchCountry(null, iso2);
 
-  // Early return if response is not ok, EG if click is over an ocean.
-  if (geojsonAndInfo.message !== "ok") {
-    console.log(geojsonAndInfo.message);
+  // Early return if response is not ok
+  if (countryData.message !== "ok") {
+    console.log(countryData.message);
   } else {
+    const geojson = await fetchGeojson(countryData.data.iso3);
     teleport(map);
-    addGeojsonToMap(geojsonAndInfo.geojson, map);
-    await getCountryInfo(geojsonAndInfo.data);
-    await addCityMarkers(geojsonAndInfo.data.iso2, geojsonAndInfo.data.flag, map);
+    addGeojsonToMap(geojson, map);
+    await getCountryInfo(countryData.data);
+    await addCityMarkers(countryData.data.iso2, countryData.data.flag, map);
   }
 
   $(".loader").toggle();

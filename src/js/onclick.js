@@ -47,7 +47,7 @@ function addGeojsonToMap(geojson, map) {
 }
 
 
-/* Fetch actual country info */
+/* Fetch actual country info for info box */
 async function getCountryInfo(data) {
   const res = await fetch(`php/getCountryInfo.php?iso2=${data.iso2}`);
   const resJson = await res.json();
@@ -72,20 +72,22 @@ async function getCountryInfo(data) {
 }
 
 
-
-
-
-
-
-
 /* Add city markers to map */
 async function addCityMarkers(iso2, flag, map) {
+  let cityInfoJson;
+  const cityInfoStored = sessionStorage.getItem(`cities_${iso2}`);
 
-  // Fetch City Info
-  const cityInfo = await fetch(`php/getCityInfo.php?iso2=${iso2}`);
-  const cityInfoJson = await cityInfo.json();
-  console.log(cityInfoJson);
+  if (!cityInfoStored) {
+    // Fetch City Info, checks session storage first to see if cities list exists already.
+    const cityInfo = await fetch(`php/getCityInfo.php?iso2=${iso2}`);
+    cityInfoJson = await cityInfo.json();
+    sessionStorage.setItem(`cities_${iso2}`, JSON.stringify(cityInfoJson));
+    console.log(cityInfoJson);
+  } else {
+    cityInfoJson = JSON.parse(cityInfoStored);
+  }
 
+  
   await Promise.all(
   cityInfoJson.map(async city => {
    
