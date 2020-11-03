@@ -135,20 +135,25 @@ $("#country-select").on("change", async () => {
   if (iso2 !== "default" && !loading) {
   loading = true;
   $(".loader").toggle();
+  
+  try {
+    // Remove layers and fetch country info
+    removeLayers(map);
+    const countryData = await fetchCountry(null, iso2);
 
-  // Remove layers and fetch country info
-  removeLayers(map);
-  const countryData = await fetchCountry(null, iso2);
-
-  // Early return if response is not ok
-  if (countryData.message !== "ok") {
-    console.log(countryData.message);
-  } else {
-    const geojson = await fetchGeojson(countryData.data.iso3);
-    teleport(map);
-    addGeojsonToMap(geojson, map);
-    await getCountryInfo(countryData.data);
-    await addCityMarkers(countryData.data.iso2, countryData.data.flag, map);
+    // Early return if response is not ok
+    if (countryData.message !== "ok") {
+      console.log(countryData.message);
+    } else {
+      const geojson = await fetchGeojson(countryData.data.iso3);
+      teleport(map);
+      addGeojsonToMap(geojson, map);
+      await getCountryInfo(countryData.data);
+      await addCityMarkers(countryData.data.iso2, countryData.data.flag, map);
+    }
+  } catch(err) {
+    console.log(err);
+    console.log("Something went wrong, sorry!");
   }
 
   $(".loader").toggle();

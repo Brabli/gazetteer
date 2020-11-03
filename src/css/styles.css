@@ -38,6 +38,9 @@ img {
 
 
 #navbar {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  cursor: default;
   z-index: 2;
   height: 2.5rem;
   background: rgb(0,55,92);
@@ -163,7 +166,9 @@ img {
   border: 1px solid black;
 }
 
-
+.leaflet-control-scale {
+  cursor: grab;
+}
 
 #modal-box {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -176,6 +181,9 @@ img {
 }
 
 #tab {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  cursor: pointer;
   font-size: 0.9rem;
   background: rgb(0,55,92);
   background: linear-gradient(0deg, rgba(0,55,92,1) 33%, rgba(3,70,118,1) 100%);
@@ -192,6 +200,7 @@ img {
 }
 
 .content {
+  cursor: default;
   background: rgb(0,55,92);
   background: linear-gradient(0deg, rgba(3,70,118,1) 33%, rgba(0,55,92,1) 100% );
   padding: 0.1rem 0.5rem;
