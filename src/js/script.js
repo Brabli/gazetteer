@@ -163,3 +163,8 @@ $("#tab").on("click", () => {
   });
   $("#arrow").toggleClass("flip");
 });
+
+// Clears local storage on window close
+window.addEventListener("unload", () => {
+  localStorage.clear();
+})

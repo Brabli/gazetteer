@@ -94,6 +94,7 @@ async function addCityMarkers(iso2, flag, map) {
     const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
     const weather = await weatherInfo.json();
     
+    // Early return if weather is not available
     if (weather.status !== "ok") return false;
 
     const cityMarker = L.marker([city.lat, city.long], {
