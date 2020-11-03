@@ -45,8 +45,6 @@ img {
 #navbar {
   z-index: 2;
   height: 2.5rem;
-  min-height: 2.5rem;
-  /* background-color: rgb(3, 70, 118); */
   background: rgb(0,55,92);
   background: linear-gradient(0deg, rgba(0,55,92,1) 33%, rgba(3,70,118,1) 100%);
   border-bottom: 2px solid rgb(13, 33, 71);
@@ -56,7 +54,7 @@ img {
 }
 
 .flex-item {
-  margin: 0px 0.4rem;
+  margin: 0 0.4rem;
 }
 
 .logo {
@@ -102,7 +100,7 @@ img {
 
 .leaflet-popup-content {
   max-width: 10rem;
-  min-height: 18rem;
+  /* min-height: 18rem; */
   padding: 0;
   margin: 0.1rem 0.5rem;
 }
@@ -130,11 +128,9 @@ img {
 .quick-info-table td, .quick-info-table th {
   line-height: 0.8rem;
 }
-
 .quick-info-table th {
   padding-right: 1.3rem;
 }
-
 
 /* Dividing lines */
 .city-popup hr {
@@ -187,14 +183,15 @@ img {
   display: block;
   position: absolute;
   bottom: 0;
-  /* Toggle this on / off with js */
+  /* */
   /* top: calc(100vh - 1.7rem); */
-
   z-index: 4;
   width: 100vw;
+  
 }
 
 #tab {
+  font-size: 0.9rem;
   background: rgb(0,55,92);
   background: linear-gradient(0deg, rgba(0,55,92,1) 33%, rgba(3,70,118,1) 100%);
   display: flex;
@@ -202,7 +199,7 @@ img {
   align-items: center;
   border: 2px solid black;
   height: 1.7rem;
-  width: 6.4rem;
+  width: 6.8rem;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
   border-bottom: transparent;
@@ -217,6 +214,7 @@ img {
   width: inherit;
   /* max-height: 100px;
   overflow: scroll; */
+  display: none;
 }
 
 .content table {
@@ -252,4 +250,17 @@ img {
   left: 0.4rem;
   width: auto;
   height: 1.5rem;
+}
+
+#arrow {
+  rotate: 180deg;
+  height: 0.6rem;
+  width: auto;
+  margin-left: 0.35rem;
+  margin-top: 0.1rem;
+  transition: 0.33s;
+}
+
+.flip {
+  transform: rotate(180deg);
 }

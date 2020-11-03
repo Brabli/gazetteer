@@ -90,6 +90,9 @@ let loading = false;
 
 
 
+//~~~~~~~~~~~~~~~~~~~~~~~~
+/* EVENT HANDLERS BELOW */
+//~~~~~~~~~~~~~~~~~~~~~~~~
 
 /* MOUSE CLICK HANDLER */
 map.on("click", async e => {
@@ -146,4 +149,13 @@ $("#country-select").on("change", async () => {
   loading = false;
 
   }
+});
+
+/* COUNTRY INFO SLIDE TOGGLE */
+$("#tab").on("click", () => {
+  console.log("Toggle");
+  $(".content").slideToggle({
+    duration: 250
+  });
+  $("#arrow").toggleClass("flip");
 });
