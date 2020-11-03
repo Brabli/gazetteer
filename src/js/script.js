@@ -103,23 +103,24 @@ map.on("click", async e => {
   if (loading) return;
   loading = true;
   $(".loader").toggle();
-
-  // Remove layers and fetch info about where the user clicked
-  removeLayers(map);
-  const countryData = await fetchCountry(e);
-
-
-  // Early return if response is not ok, EG if click is over an ocean.
-  if (countryData.message !== "ok") {
-    console.log(countryData.message);
-  } else {
-    const geojson = await fetchGeojson(countryData.data.iso3);
-    teleport(map);
-    addGeojsonToMap(geojson, map);
-    await getCountryInfo(countryData.data);
-    await addCityMarkers(countryData.data.iso2, countryData.data.flag, map);
+  try {
+    // Remove layers and fetch info about where the user clicked
+    removeLayers(map);
+    const countryData = await fetchCountry(e);
+    // Early return if response is not ok, EG if click is over an ocean.
+    if (countryData.message !== "ok") {
+      console.log(countryData.message);
+    } else {
+      const geojson = await fetchGeojson(countryData.data.iso3);
+      teleport(map);
+      addGeojsonToMap(geojson, map);
+      await getCountryInfo(countryData.data);
+      await addCityMarkers(countryData.data.iso2, countryData.data.flag, map);
+    }
+  } catch(err) {
+    console.log(err);
+    console.log("Something went wrong, sorry!");
   }
-
   // Turn off loader
   $(".loader").toggle();
   loading = false;

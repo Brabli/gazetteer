@@ -32,10 +32,8 @@ img {
   text-decoration: underline;
 }
 
-.leaflet-control-attribution {
-  display: relative;
-  z-index: 9999;
-  background-color: black;
+.leaflet-control-attribution a {
+  color: black;
 }
 
 
@@ -59,6 +57,7 @@ img {
 
 .flex-item {
   margin: 0 0.4rem;
+  white-space: nowrap;
 }
 
 .logo {
@@ -243,7 +242,6 @@ img {
 }
 
 #arrow {
-  rotate: 180deg;
   height: 0.6rem;
   width: auto;
   margin-left: 0.35rem;
@@ -257,6 +255,11 @@ img {
 
 /* Changes country info box to not take up the whole of the bottom of the screen */
 @media only screen and (min-width: 430px) {
+
+  #modal-box {
+    width: 320px;
+  }
+
   .content {
     width: 320px;
     border-right: 2px solid black;
@@ -266,6 +269,11 @@ img {
 
 /* Scales up country info box */
 @media only screen and (min-width: 1000px) {
+
+  #modal-box {
+    width: 400px;
+  }
+
   .content {
     font-size: 1.15em;
     width: 400px;
@@ -281,7 +289,7 @@ img {
   text-shadow: 1px 2px 2px rgba(0,0,0,0.3);
 }
 
-a:link {color: aliceblue;}
-a:visited {color: aliceblue;}
-a:hover {color: rgb(0, 185, 236);}
-a:active {color: rgb(0, 86, 236);}
+.content a:link {color: aliceblue;}
+.content a:visited {color: aliceblue;}
+.content a:hover {color: rgb(0, 185, 236);}
+.content a:active {color: rgb(0, 86, 236);}
