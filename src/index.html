@@ -11,12 +11,12 @@
     <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="./favicon.png" />
     <!-- TODO Link to a favicon here -->
   </head>
   <body>
     <!-- Navbar -->
     <div id="navbar">
-
       <!-- Logo and Loader Container-->
       <div class="flex-item">
         <!-- Logo -->
@@ -35,23 +35,19 @@
         </select>
       </div>
     </div>
+
     <!-- Map -->
     <div id="map"></div>
     <div class="shadow"></div>
 
-    <!-- Decided not to use -->
-    <!-- <div id="lat-long">
-      <p id="lat">Lat: 11.292928291283192383</p>
-      <p id="long">Long: 11.292928291283192383</p>
-    </div> -->
-    
+    <!-- Country Info Box -->
     <div id="modal-box">
       <div id="tab">Country Info <img id="arrow" src="./img/triangle.svg" /></div>
       <div class="content">
         
         <table>
           <header class="country-name" id="info-country"></header>
-          <tbody
+          <tbody>
           <tr>
             <th>Continent:</th>
             <td id="info-cont"></td>

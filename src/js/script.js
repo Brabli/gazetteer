@@ -58,6 +58,7 @@ const attributionToggleControl = L.easyButton("fa-quote-left", (() => {
   let attControl = L.control.attribution({prefix: ""});
   let timesToggled = 0;
   function toggle() {
+    $("#modal-box").toggle();
     attributionToggle ? attControl.addTo(map) : attControl.remove(map);
     attributionToggle = !attributionToggle;
     timesToggled++;
