@@ -22,7 +22,7 @@ img {
 
 #map {
   width: 100vw;
-  height: calc(100vh - 2.5rem);
+  height: calc(100% - 2.5rem);
   position: absolute;
   bottom: 0;
   z-index: 1;
@@ -75,7 +75,7 @@ img {
   position: relative;
   display: inline-block;
   top: 0.1rem;
-  margin-left: 0.2rem;
+  margin-left: 0.3rem;
 }
 .loader {
   display: none;
@@ -254,6 +254,7 @@ img {
 }
 
 #info-link {
+  font-size: 0.8rem;
   padding: 0.1rem 0;
 }
 
@@ -301,7 +302,9 @@ img {
   .content header {
     font-size: 1.65rem;
   }
-
+  #info-link {
+    padding: 0.2rem 0;
+  }
   #info-flag {
     height: 1.8rem;
   }
@@ -325,8 +328,11 @@ img {
   #arrow {
     display: none;
   }
+  #info-link {
+    font-size: 0.7rem;
+  }
   .load-container {
-    margin-left: 0;
+    margin-left: 0rem;
   }
 }
 
