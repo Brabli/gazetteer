@@ -86,8 +86,9 @@
       $response["windStatement"] = "Hurricane";
       break;
   }
-  $response["apiUrl"] = $openweather_url;
-
+  
+  // degbugging
+  // $response["apiUrl"] = $openweather_url;
   header('Content-type: application/json');
   echo json_encode($response);
 ?>

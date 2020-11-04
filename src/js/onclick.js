@@ -54,6 +54,7 @@ function addGeojsonToMap(geojson, map) {
 
 
 /* Fetch actual country info for info box */
+// Should have used object destructuring here
 async function getCountryInfo(data) {
   const res = await fetch(`php/getCountryInfo.php?iso2=${data.iso2}`);
   const resJson = await res.json();
@@ -62,7 +63,7 @@ async function getCountryInfo(data) {
   $("#info-pop").html(resJson["population"].toLocaleString());
   $("#info-cap").html(resJson["capital"]);
 
-  // Rounds lat / long. parseFloat() removes any trailing zeroes from toFixed().
+  // Rounds lat / long so it's not stupidly long. parseFloat() removes any trailing zeroes left by toFixed().
   const lat = parseFloat(resJson["latlng"][0].toFixed(4)) + "°";
   const lng = parseFloat(resJson["latlng"][1].toFixed(4)) + "°";
 
@@ -90,7 +91,6 @@ async function addCityMarkers(iso2, flag, map) {
     // Storage error handling
     try {
       sessionStorage.setItem(`cities_${iso2}`, JSON.stringify(cityInfoJson));
-      console.log(cityInfoJson);
     } catch(err) {
       console.log(err);
       console.log("Session storage full!");
@@ -102,10 +102,23 @@ async function addCityMarkers(iso2, flag, map) {
   // Promise all with map() instead of a loop as this makes the weather calls concurrent, thus speeding up the process of fetching the weather greatly.
   await Promise.all(
   cityInfoJson.map(async city => {
-   
-    const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
-    const weather = await weatherInfo.json();
-    
+
+    let weather;
+    // Key to weather data looks like "ireland_dublin_weather"
+    weather = sessionStorage.getItem(`${city.country}_${city.name}_weather`);
+    if (!weather) {
+      const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
+      weather = await weatherInfo.json();
+      try {
+        sessionStorage.setItem(`${city.country}_${city.name}_weather`, JSON.stringify(weather));
+      } catch(err) {
+        console.log(err);
+        console.log("Session storage full!");
+      }
+    } else {
+      weather = JSON.parse(weather);
+    }
+
     // Early return if weather is not available
     if (weather.status !== "ok") return false;
 

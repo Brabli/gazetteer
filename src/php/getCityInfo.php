@@ -27,26 +27,23 @@
   // Reduce to 10 entries
   $decoded = array_slice($decoded, 0, 10);
 
-
+  // Construct json response by looping over $decoded results array
   $response = [];
-  // Construct json response by looping over $decoded array
   foreach ($decoded as $entry) {
     $city["name"] = $entry["name"];
     $city["population"] = $entry["population"];
     $city["lat"] = $entry["lat"];
     $city["long"] = $entry["lng"];
+    $city["country"] = $entry["countryName"];
+    $city["iso2"] = strtolower($entry["countryCode"]);
     if (strpos($entry["fcodeName"], "capital") !== FALSE) {
       $city["isCapital"] = TRUE;
     } else {
       $city["isCapital"] = FALSE;
     }
-    $city["country"] = $entry["countryName"];
-    $city["iso2"] = strtolower($entry["countryCode"]);
-
     array_push($response, $city);
   }
 
   // Send response
   header('Content-type: application/json');
   echo json_encode($response);
-?>
