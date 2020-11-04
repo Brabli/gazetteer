@@ -24,8 +24,8 @@
     }
   }
 
-  // Reduce to 10 entries
-  $decoded = array_slice($decoded, 0, 10);
+  // Reduce to maximum of 12 entries
+  $decoded = array_slice($decoded, 0, 12);
 
   // Construct json response by looping over $decoded results array
   $response = [];

@@ -52,8 +52,9 @@ img {
 }
 
 #country-select {
-  max-width: 11rem;
+  cursor: pointer;
   width: 48vw;
+  max-width: 11rem;
   margin-top: 0.2rem;
   font-size: 0.75rem;
 }

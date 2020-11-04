@@ -98,6 +98,7 @@ async function addCityMarkers(iso2, flag, map) {
   } else {
     cityInfoJson = JSON.parse(cityInfoStored);
   }
+  console.log(cityInfoJson);
 
   // Promise all with map() instead of a loop as this makes the weather calls concurrent, thus speeding up the process of fetching the weather greatly.
   await Promise.all(
