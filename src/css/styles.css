@@ -36,7 +36,6 @@ img {
   color: black;
 }
 
-
 #navbar {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -71,13 +70,13 @@ img {
   font-size: 1.5rem;
 }
 
+/* Animated Loader */
 .load-container {
   position: relative;
   display: inline-block;
   top: 0.1rem;
   margin-left: 0.2rem;
 }
-
 .loader {
   display: none;
   border: 0.15rem solid #f3f3f3; /* Light grey */
@@ -87,12 +86,12 @@ img {
   height: 0.9rem;
   animation: spin 0.3s linear infinite;
 }
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
+/* City Info Wrapper */
 .leaflet-popup-content {
   max-width: 10rem;
   padding: 0;
@@ -198,6 +197,15 @@ img {
   border-top-right-radius: 0.5rem;
   border-bottom: transparent;
   margin-left: 0.5rem;
+}
+
+#tab:hover {
+  background: rgb(0, 118, 236);
+  background: linear-gradient(0deg, rgba(3,70,118,1) 0%, rgb(0, 118, 236, 1) 100%);
+}
+
+#tab:active {
+  color: rgb(0, 185, 236);
 }
 
 .content {
