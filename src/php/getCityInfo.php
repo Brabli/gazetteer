@@ -19,7 +19,7 @@
 
   // Remove non-cities from results
   foreach ($decoded as $key => $entry) {
-    if ($entry["fclName"] !== "city, village,...") {
+    if ($entry["fclName"] !== "city, village,..." || $entry["countryCode"] !== strtoupper($iso2)) {
       unset($decoded[$key]);
     }
   }
@@ -27,7 +27,9 @@
   // Reduce to 10 entries
   $decoded = array_slice($decoded, 0, 10);
 
+
   $response = [];
+  // Construct json response by looping over $decoded array
   foreach ($decoded as $entry) {
     $city["name"] = $entry["name"];
     $city["population"] = $entry["population"];
