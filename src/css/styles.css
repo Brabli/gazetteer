@@ -155,8 +155,6 @@ img {
   text-decoration: underline;
 }
 
-
-
 .quick-info-table td {
   text-align: center;
 }
@@ -309,6 +307,28 @@ img {
   }
 }
 
+/* For really tiny screens */
+@media only screen and (max-width: 265px) {
+  .flex-item {
+    margin: 0 0.1rem;
+  }
+  .content {
+    font-size: 85%;
+  }
+  .content header {
+    font-size: 1.3rem;
+  }
+  #tab {
+    width: 5rem;
+    font-size: 0.8rem;
+  }
+  #arrow {
+    display: none;
+  }
+  .load-container {
+    margin-left: 0;
+  }
+}
 
 .text-shadow {
   text-shadow: 1px 2px 2px rgba(0,0,0,0.3);

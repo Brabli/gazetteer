@@ -2,6 +2,7 @@
 // TODO: This is slow, refactor to make it faster
 // Possible colours: green grey violet yellow orange blue red green gold
 function icon(colour) {
+  
   return new L.Icon({
     iconUrl: `img/marker-icon-2x-${colour}.png`,
     shadowUrl: 'img/marker-shadow.png',

@@ -16,7 +16,6 @@ async function fetchCountry(e, countryCode = undefined) {
     }
     // Parse and return response
     const countryData = await countryRes.json();
-    console.log(countryData);
     return countryData;
 }
 
@@ -24,7 +23,6 @@ async function fetchCountry(e, countryCode = undefined) {
 async function fetchGeojson(iso3) {
   const storedGeojson = localStorage.getItem(iso3);
   if (!storedGeojson) {
-    console.log("Not stored");
     // If no geojson in storage fetch geojson info from server
     const geojson = await fetch(`php/getGeojson.php?iso3=${iso3}`);
     const geojsonParse = await geojson.json();
@@ -34,12 +32,10 @@ async function fetchGeojson(iso3) {
       localStorage.setItem(iso3, geojsonString);
     } catch(err) {
       console.log(err);
-      console.log("Local Storage full!")
     }
     return geojsonParse;
     // Otherwise return stored geojson
   } else {
-    console.log("Stored");
     return JSON.parse(storedGeojson);
   }
 }
@@ -93,12 +89,10 @@ async function addCityMarkers(iso2, flag, map) {
       sessionStorage.setItem(`cities_${iso2}`, JSON.stringify(cityInfoJson));
     } catch(err) {
       console.log(err);
-      console.log("Session storage full!");
     }
   } else {
     cityInfoJson = JSON.parse(cityInfoStored);
   }
-  console.log(cityInfoJson);
 
   // Promise all with map() instead of a loop as this makes the weather calls concurrent, thus speeding up the process of fetching the weather greatly.
   await Promise.all(
@@ -108,13 +102,12 @@ async function addCityMarkers(iso2, flag, map) {
     // Key to weather data looks like "ireland_dublin_weather"
     weather = sessionStorage.getItem(`${city.country}_${city.name}_weather`);
     if (!weather) {
-      const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
-      weather = await weatherInfo.json();
       try {
+        const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
+        weather = await weatherInfo.json();
         sessionStorage.setItem(`${city.country}_${city.name}_weather`, JSON.stringify(weather));
       } catch(err) {
         console.log(err);
-        console.log("Session storage full!");
       }
     } else {
       weather = JSON.parse(weather);
@@ -175,7 +168,6 @@ async function addCityMarkers(iso2, flag, map) {
       </table>
     </div>
     `);
-    // Add marker to map once constructed
     cityMarker.addTo(map);
  })
 );

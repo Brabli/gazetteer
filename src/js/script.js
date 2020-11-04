@@ -3,7 +3,7 @@ import { basemaps, overlays } from "./tiles.js";
 import { teleport, removeLayers, populateSelect } from "./helpers.js";
 import { fetchGeojson, fetchCountry, addGeojsonToMap, addCityMarkers, getCountryInfo } from "./onclick.js";
 
-// These override some settings that allow infinite horizontal scrolling possible. I didn't write them.
+// These two variables override some settings that allow infinite horizontal scrolling possible. I didn't write them.
 const hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
   MAX_LATITUDE: 89.999
 });
@@ -11,6 +11,8 @@ const hackedEPSG3857 = L.Util.extend(L.CRS.EPSG3857, {
   projection: hackedSphericalMercator
 });
 
+/* INIT MAP SETUP STUFF */
+/*~~~~~~~~~~~~~~~~~~~~~~*/
 // Create map
 const map = L.map('map', {
   crs: hackedEPSG3857,
@@ -25,17 +27,19 @@ const map = L.map('map', {
 // Add initial basemap tiles
 basemaps.World.addTo(map);
 
+
+/* GENERATE MAP CONTROLS */
+/*~~~~~~~~~~~~~~~~~~~~~~*/
 // Layer Control
 const layerControl = L.control.layers(basemaps, overlays, {
   collapsed: true
 });
-  
+
 // Scale Control
 const scaleControl = L.control.scale({
   position: "topleft",
   maxWidth: 100
 });
-
 
 // Fly to Location Control
 const flyToLocationControl = L.easyButton('fa-bullseye', () => {
@@ -71,6 +75,9 @@ const attributionToggleControl = L.easyButton("fa-quote-left", (() => {
   return toggle;
 })(), "Toggle Attributions", {position: "topright"});
 
+
+/* FINAL SETUP */
+/*~~~~~~~~~~~~~~~~~~~~~~*/
 // Add controls to map
 layerControl.addTo(map);
 scaleControl.addTo(map);
@@ -78,28 +85,25 @@ flyToLocationControl.addTo(map);
 centreMapControl.addTo(map);
 attributionToggleControl.addTo(map);
 
-// Populate country select
-populateSelect();
-
 // Adds a close button to layer control. It's hacky but it works.
 $(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
 $("#layer-control-close-button").on("click", () => {
   layerControl.collapse();
 });
 
-// Global loading variable
-let loading = false;
+// Populate country select
+populateSelect();
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~
 /* EVENT HANDLERS BELOW */
 //~~~~~~~~~~~~~~~~~~~~~~~~
+// Global loading variable
+let loading = false;
 
 /* MOUSE CLICK HANDLER */
 map.on("click", async e => {
-
   // Turn on loader
-  console.log("CLICK");
   if (loading) return;
   loading = true;
   $(".loader").toggle();
@@ -129,7 +133,7 @@ map.on("click", async e => {
 
 /* COUNTRY SELECT HANDLER */
 $("#country-select").on("change", async () => {
-  // Get country selected iso2
+  // Get selected country's iso2
   const iso2 = $("#country-select option:selected").val();
 
   if (iso2 !== "default" && !loading) {
@@ -158,7 +162,6 @@ $("#country-select").on("change", async () => {
 
   $(".loader").toggle();
   loading = false;
-
   }
 });
 
@@ -174,4 +177,4 @@ $("#tab").on("click", () => {
 // Clears local storage on window close
 window.addEventListener("unload", () => {
   localStorage.clear();
-})
+});
