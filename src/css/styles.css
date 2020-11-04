@@ -284,12 +284,19 @@ img {
   }
 
   .content {
-    font-size: 1.15em;
     width: 400px;
-    padding: 0.3rem;
+    padding: 0.2rem;
   }
   .content td, .content th {
     padding: 0.1rem;
+    font-size: 1.15rem;
+  }
+  .content header {
+    font-size: 1.65rem;
+  }
+
+  #info-flag {
+    height: 1.8rem;
   }
 }
 
