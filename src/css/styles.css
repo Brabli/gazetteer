@@ -266,11 +266,11 @@ img {
 @media only screen and (min-width: 430px) {
 
   #modal-box {
-    width: 320px;
+    width: 20rem;
   }
 
   .content {
-    width: 320px;
+    width: 20rem;
     border-right: 2px solid black;
     border-top-right-radius: 0.5rem;
   }
@@ -280,11 +280,11 @@ img {
 @media only screen and (min-width: 1000px) {
 
   #modal-box {
-    width: 400px;
+    width: 25rem;
   }
 
   .content {
-    width: 400px;
+    width: 25rem;
     padding: 0.2rem;
   }
   .content td, .content th {
