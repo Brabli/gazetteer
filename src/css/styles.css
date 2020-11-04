@@ -197,13 +197,12 @@ img {
   margin-left: 0.5rem;
 }
 
-#tab:hover {
-  background: rgb(0, 118, 236);
-  background: linear-gradient(0deg, rgba(3,70,118,1) 0%, rgb(0, 118, 236, 1) 100%);
-}
-
 #tab:active {
   color: rgb(0, 185, 236);
+}
+
+.country-name {
+  text-shadow: 2px 2px 4px #000000;
 }
 
 .content {
@@ -284,13 +283,17 @@ img {
   }
 }
 
-/* Scales up country info box */
+/* Scales up country info box, add hover on tab */
 @media only screen and (min-width: 1000px) {
+/* add hover to tab when screen is large enough */
+  #tab:hover {
+    background: rgb(0, 118, 236);
+    background: linear-gradient(0deg, rgba(3,70,118,1) 0%, rgb(0, 118, 236, 1) 100%);
+  }
 
   #modal-box {
     width: 25rem;
   }
-
   .content {
     width: 25rem;
     padding: 0.2rem;
