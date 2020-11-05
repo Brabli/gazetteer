@@ -20,21 +20,26 @@ img {
 }
 /* RESET OVER */
 
+.nav-box-shadow {
+  -webkit-box-shadow: 0px -13px 6px 16px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px -13px 6px 16px rgba(0,0,0,0.75);
+  box-shadow: 0px -13px 6px 16px rgba(0,0,0,0.75);  
+}
+
 #map {
   width: 100vw;
+  /* 100% instead of 100vh  */
   height: calc(100% - 2.5rem);
   position: absolute;
   bottom: 0;
-  z-index: 1;
+  /* z-index needs to be -1 so navbar's box shadow is visible */
+  z-index: -1;
 }
 
 .underline {
   text-decoration: underline;
 }
 
-.leaflet-control-attribution a {
-  color: black;
-}
 
 #navbar {
   -webkit-user-select: none;
@@ -206,9 +211,12 @@ img {
 }
 
 .content {
+  -webkit-box-shadow: inset 9px 4px 26px -12px rgba(0,0,0,0.75);
+  -moz-box-shadow: inset 9px 4px 26px -12px rgba(0,0,0,0.75);
+  box-shadow: inset 9px 4px 26px -12px rgba(0,0,0,0.75);
   cursor: default;
   background: rgb(0,55,92);
-  background: linear-gradient(0deg, rgba(3,70,118,1) 33%, rgba(0,55,92,1) 100% );
+  background: linear-gradient(-35deg, rgba(3,70,118,1) 33%, rgba(0,55,92,1) 100% );
   padding: 0.1rem 0.5rem;
   border-top: 2px solid black;
   width: inherit;
