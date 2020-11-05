@@ -1,22 +1,20 @@
 import { correctLongitude, icon } from "./helpers.js";
 
-
 /* Fetch Country */
 async function fetchCountry(e, countryCode = undefined) {
-    // Init vars
-    let countryRes;
-    // If no country code provided find country based on click event's lat/long.
-    if (!countryCode) {
-      const lat = e.latlng["lat"];
-      const lng = correctLongitude(e.latlng["lng"]);
-      countryRes = await fetch(`php/getCountry.php?lat=${lat}&long=${lng}`);
-    // Otherwise look up country with iso2. Used by Select Country dropdown.
-    } else {
-      countryRes = await fetch(`php/getCountry.php?code=${countryCode}`);
-    }
-    // Parse and return response
-    const countryData = await countryRes.json();
-    return countryData;
+  let countryRes;
+  // If no country code provided find country based on click event's lat/long.
+  if (!countryCode) {
+    const lat = e.latlng["lat"];
+    const lng = correctLongitude(e.latlng["lng"]);
+    countryRes = await fetch(`php/getCountry.php?lat=${lat}&long=${lng}`);
+  // Otherwise look up country with iso2. Used by Select Country dropdown.
+  } else {
+    countryRes = await fetch(`php/getCountry.php?code=${countryCode}`);
+  }
+  // Parse and return response
+  const countryData = await countryRes.json();
+  return countryData;
 }
 
 /* Fetch a country's geojson */
@@ -50,29 +48,29 @@ function addGeojsonToMap(geojson, map) {
 
 
 /* Fetch actual country info for info box and assign values to elements */
-// Should have used object destructuring here
 async function getCountryInfo(data) {
   const res = await fetch(`php/getCountryInfo.php?iso2=${data.iso2}`);
-  const resJson = await res.json();
-  $("#info-country").html(`${data["countryName"]}<img id="info-flag" src=${resJson.flag} />`);
-  $("#info-cont").html(resJson["region"]);
-  $("#info-pop").html(resJson["population"].toLocaleString());
-  $("#info-cap").html(resJson["capital"]);
+  // Unpacks response
+  const {region, population, flag, capital, latlng, currencies, languages} = await res.json();
+  const {name: currencyName, symbol: currencySymbol} = currencies[0];
+  // Use country name from previously fetched data as it's formatted slightly better in some cases, EG "United Kindom" instead of "The United Kindgom Of Great Britain and Northern Ireland".
+  $("#info-country").html(`${data["countryName"]}<img id="info-flag" src=${flag} />`);
+  $("#info-cont").html(region);
+  $("#info-pop").html(population.toLocaleString());
+  $("#info-cap").html(capital);
   // Rounds lat / long so it's not stupidly long. parseFloat() removes any trailing zeroes left by toFixed().
-  const lat = parseFloat(resJson["latlng"][0].toFixed(4)) + "°";
-  const lng = parseFloat(resJson["latlng"][1].toFixed(4)) + "°";
+  const lat = parseFloat(latlng[0].toFixed(4)) + "°";
+  const lng = parseFloat(latlng[1].toFixed(4)) + "°";
   $("#info-coords").html(`${lat}, ${lng}`);
-
-  $("#currency-name").html(resJson["currencies"][0]["name"]);
-  const currencySymbol = resJson["currencies"][0]["symbol"];
+  // Sometimes currency symbol is undefined so this makes sure the text is formatted properly.
+  $("#currency-name").html(currencyName);
   if (currencySymbol) {
     $("#currency-symbol").html(`( ${currencySymbol} )`);
   } else {
     $("#currency-symbol").html("");
   }
-
-
-  $("#info-lan").html(resJson["languages"][0]["name"]);
+  $("#info-lan").html(languages[0]["name"]);
+  // Use wikilink from previously fetched data from fetchCountry().
   $("#info-link").html(`<a href="${data.wikiLink}" target="_blank">Open Wikipedia page in new tab</a>`);
 }
 
@@ -82,8 +80,8 @@ async function addCityMarkers(iso2, flag, map) {
   let cityInfoJson;
   const cityInfoStored = sessionStorage.getItem(`cities_${iso2}`);
 
+  // If no stored info request it from PHP routine
   if (!cityInfoStored) {
-    // Fetch City Info, checks session storage first to see if cities list exists already.
     const cityInfo = await fetch(`php/getCityInfo.php?iso2=${iso2}`);
     cityInfoJson = await cityInfo.json();
     // Storage error handling
