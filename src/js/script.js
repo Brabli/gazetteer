@@ -167,7 +167,6 @@ $("#country-select").on("change", async () => {
 
 /* COUNTRY INFO SLIDE TOGGLE */
 $("#tab").on("click", () => {
-  console.log("Toggle");
   $(".content").slideToggle({
     duration: 250
   });

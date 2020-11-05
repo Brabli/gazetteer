@@ -243,6 +243,17 @@ img {
   margin: 0.2rem 0;
 }
 
+/* These make the currency name and symbol seperate from each other properly */
+#info-currency {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#info-currency * {
+  padding-right: 0.3rem;
+}
+
+
 #info-flag {
   position: relative;
   display: inline-block;

@@ -49,7 +49,7 @@ function addGeojsonToMap(geojson, map) {
 }
 
 
-/* Fetch actual country info for info box */
+/* Fetch actual country info for info box and assign values to elements */
 // Should have used object destructuring here
 async function getCountryInfo(data) {
   const res = await fetch(`php/getCountryInfo.php?iso2=${data.iso2}`);
@@ -58,18 +58,20 @@ async function getCountryInfo(data) {
   $("#info-cont").html(resJson["region"]);
   $("#info-pop").html(resJson["population"].toLocaleString());
   $("#info-cap").html(resJson["capital"]);
-
   // Rounds lat / long so it's not stupidly long. parseFloat() removes any trailing zeroes left by toFixed().
   const lat = parseFloat(resJson["latlng"][0].toFixed(4)) + "°";
   const lng = parseFloat(resJson["latlng"][1].toFixed(4)) + "°";
+  $("#info-coords").html(`${lat}, ${lng}`);
 
-  $("#info-coords").html(lat + ", " + lng);
-  // If no symbol associated with currency just display currency name
-  if (resJson["currencies"][0]["symbol"] === undefined) {
-    $("#info-currency").html(resJson["currencies"][0]["name"]);
+  $("#currency-name").html(resJson["currencies"][0]["name"]);
+  const currencySymbol = resJson["currencies"][0]["symbol"];
+  if (currencySymbol) {
+    $("#currency-symbol").html(`( ${currencySymbol} )`);
   } else {
-    $("#info-currency").html(resJson["currencies"][0]["name"] + " ( " + resJson["currencies"][0]["symbol"] + " )");
+    $("#currency-symbol").html("");
   }
+
+
   $("#info-lan").html(resJson["languages"][0]["name"]);
   $("#info-link").html(`<a href="${data.wikiLink}" target="_blank">Open Wikipedia page in new tab</a>`);
 }
