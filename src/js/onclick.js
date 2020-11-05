@@ -19,9 +19,9 @@ async function fetchCountry(e, countryCode = undefined) {
 
 /* Fetch a country's geojson */
 async function fetchGeojson(iso3) {
+  // If no geojson in storage fetch geojson info from server
   const storedGeojson = localStorage.getItem(iso3);
   if (!storedGeojson) {
-    // If no geojson in storage fetch geojson info from server
     const geojson = await fetch(`php/getGeojson.php?iso3=${iso3}`);
     const geojsonParse = await geojson.json();
     const geojsonString = JSON.stringify(geojsonParse);
@@ -49,29 +49,32 @@ function addGeojsonToMap(geojson, map) {
 
 /* Fetch actual country info for info box and assign values to elements */
 async function getCountryInfo(data) {
-  const res = await fetch(`php/getCountryInfo.php?iso2=${data.iso2}`);
-  // Unpacks response
-  const {region, population, flag, capital, latlng, currencies, languages} = await res.json();
-  const {name: currencyName, symbol: currencySymbol} = currencies[0];
-  // Use country name from previously fetched data as it's formatted slightly better in some cases, EG "United Kindom" instead of "The United Kindgom Of Great Britain and Northern Ireland".
-  $("#info-country").html(`${data["countryName"]}<img id="info-flag" src=${flag} />`);
-  $("#info-cont").html(region);
-  $("#info-pop").html(population.toLocaleString());
-  $("#info-cap").html(capital);
-  // Rounds lat / long so it's not stupidly long. parseFloat() removes any trailing zeroes left by toFixed().
-  const lat = parseFloat(latlng[0].toFixed(4)) + "°";
-  const lng = parseFloat(latlng[1].toFixed(4)) + "°";
-  $("#info-coords").html(`${lat}, ${lng}`);
-  // Sometimes currency symbol is undefined so this makes sure the text is formatted properly.
-  $("#currency-name").html(currencyName);
-  if (currencySymbol) {
-    $("#currency-symbol").html(`( ${currencySymbol} )`);
-  } else {
-    $("#currency-symbol").html("");
+  try {
+    // Fetch and unpack data
+    const res = await fetch(`php/getCountryInfo.php?iso2=${data.iso2}`);
+    const {region, population, flag, capital, latlng, currencies, languages} = await res.json();
+    const {name: currencyName, symbol: currencySymbol} = currencies[0];
+    // Rounds lat / long so it's not unnecessarily long. parseFloat() removes any trailing zeroes left by toFixed().
+    const lat = parseFloat(latlng[0].toFixed(4)) + "°";
+    const lng = parseFloat(latlng[1].toFixed(4)) + "°";
+    // Use country name from previously fetched data as it's formatted slightly better in some cases, EG "United Kindom" instead of "The United Kindgom Of Great Britain and Northern Ireland".
+    $("#info-country").html(`${data["countryName"]}<img id="info-flag" src=${flag} />`);
+    $("#info-cont").html(region);
+    // toLocaleString adds commas to population number.
+    $("#info-pop").html(population.toLocaleString());
+    $("#info-cap").html(capital);
+    $("#info-coords").html(`${lat}, ${lng}`);
+    $("#currency-name").html(currencyName);
+    // Sometimes currency symbol is undefined so this makes sure the text is formatted properly.
+    $("#currency-symbol").html(currencySymbol ? `( ${currencySymbol} )` : "");
+    $("#info-lan").html(languages[0]["name"]);
+    // Use wikilink from previously fetched data from fetchCountry().
+    $("#info-link").html(`<a href="${data.wikiLink}" target="_blank">Open Wikipedia page in new tab</a>`);
+  } catch(err) {
+    console.log(err);
+    $("#info-country").html("Something went wrong, sorry!")
+    $(".country-info-table td").html("");
   }
-  $("#info-lan").html(languages[0]["name"]);
-  // Use wikilink from previously fetched data from fetchCountry().
-  $("#info-link").html(`<a href="${data.wikiLink}" target="_blank">Open Wikipedia page in new tab</a>`);
 }
 
 

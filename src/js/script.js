@@ -123,7 +123,6 @@ map.on("click", async e => {
     }
   } catch(err) {
     console.log(err);
-    console.log("Something went wrong, sorry!");
   }
   // Turn off loader
   $(".loader").toggle();
@@ -157,7 +156,6 @@ $("#country-select").on("change", async () => {
     }
   } catch(err) {
     console.log(err);
-    console.log("Something went wrong, sorry!");
   }
 
   $(".loader").toggle();
