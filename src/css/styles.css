@@ -217,19 +217,19 @@ img {
   display: none;
 }
 
+/* Adds border to bottom of table rows */
 .content table {
   border-collapse: collapse;
   width: 100%;
   text-align: left;
 }
-
-.content th, .content td {
+.content tr {
   border-bottom: 1px solid rgba(255, 255, 255, 0.168);
 }
-
-.content tfoot td {
+.content tfoot tr {
   border-bottom: none;
 }
+
 
 .content th {
   width: 50%;
@@ -250,9 +250,8 @@ img {
 }
 
 #info-currency * {
-  padding-right: 0.3rem;
+  padding-right: 0.3rem;  
 }
-
 
 #info-flag {
   position: relative;
