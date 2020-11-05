@@ -294,7 +294,7 @@ img {
   }
 }
 
-/* Scales up country info box, add hover on tab */
+/* For large screens, scales up country info box and adds hover to country info tab */
 @media only screen and (min-width: 1000px) {
 /* add hover to tab when screen is large enough */
   #tab:hover {
@@ -303,15 +303,16 @@ img {
   }
 
   #modal-box {
-    width: 25rem;
+    /* width: 25rem; */
+    width: 26rem;
   }
   .content {
-    width: 25rem;
-    padding: 0.2rem;
+    width: 26rem;
   }
+
   .content td, .content th {
     padding: 0.1rem;
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
   .content header {
     font-size: 1.65rem;
