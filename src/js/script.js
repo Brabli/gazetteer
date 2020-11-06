@@ -42,38 +42,38 @@ const scaleControl = L.control.scale({
 });
 
 // Fly to Location Control
-const flyToLocationControl = L.easyButton('bullseye', () => {
+const flyToLocationControl = L.easyButton('fa-bullseye', () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(loc => {
       teleport(map);
       map.flyTo(new L.LatLng(loc.coords.latitude, loc.coords.longitude), 16);
     });
   }
-}, "Fly to Current Location", {position: "topright"});
+}, "Fly to Current Location", {position: "topleft"});
 
 // Centre Map Control
-const centreMapControl = L.easyButton('expand', () => {
+const centreMapControl = L.easyButton('fa-expand', () => {
   teleport(map);
   map.flyTo(new L.LatLng(45, -5), 2);
-}, "Centre Map", {position: "topright"});
+}, "Centre Map", {position: "topleft"});
 
-// Attribution Toggle Control
-const attributionToggleControl = L.easyButton("quote-left", (() => {
-  let attributionToggle = true;
-  let attControl = L.control.attribution({prefix: ""});
-  let timesToggled = 0;
-  function toggle() {
-    $("#modal-box").toggle();
-    attributionToggle ? attControl.addTo(map) : attControl.remove(map);
-    attributionToggle = !attributionToggle;
-    timesToggled++;
-    // You found the Easter Egg code, well done you!
-    if (timesToggled === 20) attControl = L.control.attribution({
-      prefix: "Pre-order Crescent Moon: The Game today for exclusive DLC, artwork and more!"
-    });
-  }
-  return toggle;
-})(), "Toggle Attributions", {position: "topright"});
+// Attribution Toggle Control - Removed so I don't get sued :(
+// const attributionToggleControl = L.easyButton("fa-quote-left", (() => {
+//   let attributionToggle = true;
+//   let attControl = L.control.attribution({prefix: ""});
+//   let timesToggled = 0;
+//   function toggle() {
+//     $("#modal-box").toggle();
+//     attributionToggle ? attControl.addTo(map) : attControl.remove(map);
+//     attributionToggle = !attributionToggle;
+//     timesToggled++;
+//     // You found the Easter Egg code, well done you!
+//     if (timesToggled === 20) attControl = L.control.attribution({
+//       prefix: "Pre-order Crescent Moon: The Game today for exclusive DLC, artwork and more!"
+//     });
+//   }
+//   return toggle;
+// })(), "Toggle Attributions", {position: "topleft"});
 
 
 /* FINAL SETUP */
