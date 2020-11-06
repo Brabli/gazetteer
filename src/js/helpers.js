@@ -1,9 +1,6 @@
-// Returns a coloured marker icon.
-// TODO: This is slow, refactor to make it faster
-// Possible colours: green grey violet yellow orange blue red green gold
+// Returns a custom marker.
 function icon(colour) {
   let icon, shape, trueColour;
-
   if (colour === "blue") {
     icon = "fa-building";
     shape = "circle";
