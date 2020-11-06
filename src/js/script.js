@@ -42,7 +42,7 @@ const scaleControl = L.control.scale({
 });
 
 // Fly to Location Control
-const flyToLocationControl = L.easyButton('fa-bullseye', () => {
+const flyToLocationControl = L.easyButton('bullseye', () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(loc => {
       teleport(map);
@@ -52,13 +52,13 @@ const flyToLocationControl = L.easyButton('fa-bullseye', () => {
 }, "Fly to Current Location", {position: "topright"});
 
 // Centre Map Control
-const centreMapControl = L.easyButton('fa-expand', () => {
+const centreMapControl = L.easyButton('expand', () => {
   teleport(map);
   map.flyTo(new L.LatLng(45, -5), 2);
 }, "Centre Map", {position: "topright"});
 
 // Attribution Toggle Control
-const attributionToggleControl = L.easyButton("fa-quote-left", (() => {
+const attributionToggleControl = L.easyButton("quote-left", (() => {
   let attributionToggle = true;
   let attControl = L.control.attribution({prefix: ""});
   let timesToggled = 0;
