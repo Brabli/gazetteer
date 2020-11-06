@@ -21,13 +21,13 @@ async function fetchCountry(input) {
 
 /* Fetch a country's geojson */
 async function fetchGeojson(iso3) {
-  // If no geojson in storage fetch geojson info from server
+  // If no geojson object in storage request geojson object from server.
   const storedGeojson = localStorage.getItem(iso3);
   if (!storedGeojson) {
     const geojson = await fetch(`php/getGeojson.php?iso3=${iso3}`);
     const geojsonParse = await geojson.json();
     const geojsonString = JSON.stringify(geojsonParse);
-    // Try to save geojson, if no storage available don't bother
+    // Try to save geojson, if no storage available don't bother.
     try {
       localStorage.setItem(iso3, geojsonString);
     } catch(err) {

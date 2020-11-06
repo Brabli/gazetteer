@@ -60,30 +60,19 @@ const centreMapControl = L.easyButton('fa-expand', () => {
   map.flyTo(new L.LatLng(45, -5), 2);
 }, "Centre Map", {position: "topleft"});
 
-// Attribution Toggle Control - Removed so I don't get sued :(
-// const attributionToggleControl = L.easyButton("fa-quote-left", (() => {
-//   let attributionToggle = true;
-//   let attControl = L.control.attribution({prefix: ""});
-//   let timesToggled = 0;
-//   function toggle() {
-//     $("#modal-box").toggle();
-//     attributionToggle ? attControl.addTo(map) : attControl.remove(map);
-//     attributionToggle = !attributionToggle;
-//     timesToggled++;
-//     if (timesToggled === 20) attControl = L.control.attribution({
-//       prefix: "Pre-order Crescent Moon: The Game today for exclusive DLC, artwork and more!"
-//     });
-//   }
-//   return toggle;
-// })(), "Toggle Attributions", {position: "topleft"});
-
+const attControl = L.control.attribution({
+  prefix: "",
+  position: "bottomright"
+});
 
 /* ADD CONTROLS TO MAP */
 /*~~~~~~~~~~~~~~~~~~~~~~*/
+attControl.addTo(map);
 layerControl.addTo(map);
 scaleControl.addTo(map);
 flyToLocationControl.addTo(map);
 centreMapControl.addTo(map);
+
 
 // Adds a close button to layer control. It's hacky but it works.
 $(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
@@ -96,11 +85,10 @@ $("#layer-control-close-button").on("click", () => {
 /*~~~~~~~~~~~~~~~~~~~~~~*/
 // Select country
 async function selectCountry(input) {
-  // Turn on loader if not already loading
+  // Check to see if loading already, turn on loader if not.
   if (loading) return;
   loading = true;
   $(".loader").toggle();
-
   try {
     removeLayers(map);
     // Determine which country user clicked over, returns a small amount of data about the country.
@@ -121,30 +109,30 @@ async function selectCountry(input) {
   } catch(err) {
     console.log(err);
   }
-
-  // Turn off loader
+  // Turn off loader.
   $(".loader").toggle();
   loading = false;
 };
 
-
-// Requests user location on load, selects country user is in
+// Requests user location on load, sends info to onSuccess which in turn calls selectCountry().
 function selectUserCountryOnLoad() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(onSuccess, onError, {timeout: 10000});
   }
 }
-// If geolocation is a success select country
+
+// If geolocation is a success, call selectCountry().
 function onSuccess(location) {
   const lat = location.coords.latitude;
   const long = location.coords.longitude;
   selectCountry({latlng: {"lat": lat, "lng": long}});
 }
 
-// If geolocation fails log error.
+// If geolocation fails, log error.
 function onError(err) {
   console.log(err);
 }
+
 
 selectUserCountryOnLoad();
 populateSelect();
