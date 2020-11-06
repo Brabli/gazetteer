@@ -178,7 +178,22 @@ async function addCityMarkers(iso2, flag, map) {
       </table>
     </div>
     `);
+
+
     cityMarker.addTo(map);
+    
+    // Show popup on mouseover
+    cityMarker.on('mouseover', function(e) {
+      cityMarker.openPopup();
+    });
+    // Remove popup on mouseout
+    cityMarker.on('mouseout', function(e) {
+      cityMarker.closePopup();
+    });
+
+    cityMarker.on("click", function(e) {
+      cityMarker.openPopup();
+    });
  })
 );
 }
