@@ -2,15 +2,25 @@
 // TODO: This is slow, refactor to make it faster
 // Possible colours: green grey violet yellow orange blue red green gold
 function icon(colour) {
-  
-  return new L.Icon({
-    iconUrl: `img/marker-icon-2x-${colour}.png`,
-    shadowUrl: 'img/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  })
+  let icon, shape, trueColour;
+
+  if (colour === "blue") {
+    icon = "fa-building";
+    shape = "circle";
+    trueColour = "rgb(0,55,92)";
+  } else {
+    icon = "fa-city";
+    shape = "star";
+    trueColour = "#8a0303";
+  }
+  return L.ExtraMarkers.icon({
+    icon: icon,
+    iconColor: "#f0f8ff",
+    svg: true,
+    markerColor: trueColour,
+    shape: shape,
+    prefix: 'fa',
+  });
 }
 
 // Corrects any longitude offset resulting from infinite scrolling of map
