@@ -38,14 +38,19 @@ async function fetchGeojson(iso3) {
   }
 }
 
-
 /* Add geojson to map and fit to screen. */
 function addGeojsonToMap(geojson, map) {
-  const geojsonFeature = L.geoJson(geojson);
+  const geojsonFeature = L.geoJson(geojson, {
+    style: {
+      "color": "rgb(9, 23, 50)",
+      "opacity": "0.7",
+      "weight": "2",
+      "fillColor": "rgba(3,70,118,1)"
+    }
+  });
   geojsonFeature.addTo(map);
   map.fitBounds(geojsonFeature.getBounds());
 }
-
 
 /* Fetch actual country info for info box and assign values to elements */
 async function getCountryInfo(data) {
