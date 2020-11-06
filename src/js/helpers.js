@@ -43,7 +43,7 @@ async function populateSelect() {
   const $countrySelect = $("#country-select");
   const countryOptions = await fetch("php/getCountryOptions.php");
   const countryOptionsJson = await countryOptions.json();
-  for (const [iso2, country] of Object.entries(countryOptionsJson)) {
+  for (const [country, iso2] of Object.entries(countryOptionsJson)) {
     $countrySelect.append(`<option value="${iso2}">${country}</option>`);
   }
 }
