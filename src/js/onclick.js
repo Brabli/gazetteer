@@ -1,16 +1,18 @@
 import { correctLongitude, icon } from "./helpers.js";
 
 /* Fetch Country */
-async function fetchCountry(e, countryCode = undefined) {
+// input parameter will either be a click event object OR an iso2 code.
+async function fetchCountry(input) {
   let countryRes;
   // If no country code provided find country based on click event's lat/long.
-  if (!countryCode) {
-    const lat = e.latlng["lat"];
-    const lng = correctLongitude(e.latlng["lng"]);
+  // If input.latlng is defined it must be a click event object, otherwise it will be assumed to be a country code EG: "GB".
+  if (input.latlng && input !== undefined) {
+    const lat = input.latlng["lat"];
+    const lng = correctLongitude(input.latlng["lng"]);
     countryRes = await fetch(`php/getCountry.php?lat=${lat}&long=${lng}`);
-  // Otherwise look up country with iso2. Used by Select Country dropdown.
+  // Fetch country based off of iso2 country code.
   } else {
-    countryRes = await fetch(`php/getCountry.php?code=${countryCode}`);
+    countryRes = await fetch(`php/getCountry.php?code=${input}`);
   }
   // Parse and return response
   const countryData = await countryRes.json();

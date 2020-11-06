@@ -3,6 +3,9 @@ import { basemaps, overlays } from "./tiles.js";
 import { teleport, removeLayers, populateSelect } from "./helpers.js";
 import { fetchGeojson, fetchCountry, addGeojsonToMap, addCityMarkers, getCountryInfo } from "./onclick.js";
 
+// Global loading variable
+let loading = false;
+
 // These two variables override some settings that allow infinite horizontal scrolling possible. I didn't write them.
 const hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
   MAX_LATITUDE: 89.999
@@ -28,7 +31,7 @@ const map = L.map('map', {
 basemaps.World.addTo(map);
 
 
-/* GENERATE MAP CONTROLS */
+/* CREATE MAP CONTROLS */
 /*~~~~~~~~~~~~~~~~~~~~~~*/
 // Layer Control
 const layerControl = L.control.layers(basemaps, overlays, {
@@ -67,7 +70,6 @@ const centreMapControl = L.easyButton('fa-expand', () => {
 //     attributionToggle ? attControl.addTo(map) : attControl.remove(map);
 //     attributionToggle = !attributionToggle;
 //     timesToggled++;
-//     // You found the Easter Egg code, well done you!
 //     if (timesToggled === 20) attControl = L.control.attribution({
 //       prefix: "Pre-order Crescent Moon: The Game today for exclusive DLC, artwork and more!"
 //     });
@@ -76,14 +78,12 @@ const centreMapControl = L.easyButton('fa-expand', () => {
 // })(), "Toggle Attributions", {position: "topleft"});
 
 
-/* FINAL SETUP */
+/* ADD CONTROLS TO MAP */
 /*~~~~~~~~~~~~~~~~~~~~~~*/
-// Add controls to map
 layerControl.addTo(map);
 scaleControl.addTo(map);
 flyToLocationControl.addTo(map);
 centreMapControl.addTo(map);
-// attributionToggleControl.addTo(map);
 
 // Adds a close button to layer control. It's hacky but it works.
 $(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
@@ -91,75 +91,80 @@ $("#layer-control-close-button").on("click", () => {
   layerControl.collapse();
 });
 
-// Populate country select
+
+/* DEFINE FUNCTIONS */
+/*~~~~~~~~~~~~~~~~~~~~~~*/
+// Select country
+async function selectCountry(input) {
+  // Turn on loader if not already loading
+  if (loading) return;
+  loading = true;
+  $(".loader").toggle();
+
+  try {
+    removeLayers(map);
+    // Determine which country user clicked over, returns a small amount of data about the country.
+    const countryData = await fetchCountry(input);
+    // Check to see if user is indeed over a country
+    if (countryData.message === "ok") {
+      const {iso3, iso2, flag} = countryData.data;
+      const geojson = await fetchGeojson(iso3);
+      teleport(map);
+      addGeojsonToMap(geojson, map);
+      // Fetches the info used in the Country Info box.
+      await getCountryInfo(countryData.data);
+      // Fetches city and weather data and appends markers to the map.
+      await addCityMarkers(iso2, flag, map);
+    } else {
+      console.log(countryData.message);
+    }
+  } catch(err) {
+    console.log(err);
+  }
+
+  // Turn off loader
+  $(".loader").toggle();
+  loading = false;
+};
+
+
+// Requests user location on load, selects country user is in
+function selectUserCountryOnLoad() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, {timeout: 10000});
+  }
+}
+// If geolocation is a success select country
+function onSuccess(location) {
+  const lat = location.coords.latitude;
+  const long = location.coords.longitude;
+  selectCountry({latlng: {"lat": lat, "lng": long}});
+}
+
+// If geolocation fails log error.
+function onError(err) {
+  console.log(err);
+}
+
+selectUserCountryOnLoad();
 populateSelect();
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~
 /* EVENT HANDLERS BELOW */
 //~~~~~~~~~~~~~~~~~~~~~~~~
-// Global loading variable
-let loading = false;
 
 /* MOUSE CLICK HANDLER */
 map.on("click", async e => {
-  // Turn on loader
-  if (loading) return;
-  loading = true;
-  $(".loader").toggle();
-  try {
-    // Remove layers and fetch info about where the user clicked
-    removeLayers(map);
-    const countryData = await fetchCountry(e);
-    // Early return if response is not ok, EG if click is over an ocean.
-    if (countryData.message !== "ok") {
-      console.log(countryData.message);
-    } else {
-      const geojson = await fetchGeojson(countryData.data.iso3);
-      teleport(map);
-      addGeojsonToMap(geojson, map);
-      await getCountryInfo(countryData.data);
-      await addCityMarkers(countryData.data.iso2, countryData.data.flag, map);
-    }
-  } catch(err) {
-    console.log(err);
-  }
-  // Turn off loader
-  $(".loader").toggle();
-  loading = false;
+  selectCountry(e);
 });
-
 
 /* COUNTRY SELECT HANDLER */
 $("#country-select").on("change", async () => {
   // Get selected country's iso2
   const iso2 = $("#country-select option:selected").val();
-
-  if (iso2 !== "default" && !loading) {
-  loading = true;
-  $(".loader").toggle();
-  
-  try {
-    // Remove layers and fetch country info
-    removeLayers(map);
-    const countryData = await fetchCountry(null, iso2);
-
-    // Early return if response is not ok
-    if (countryData.message !== "ok") {
-      console.log(countryData.message);
-    } else {
-      const geojson = await fetchGeojson(countryData.data.iso3);
-      teleport(map);
-      addGeojsonToMap(geojson, map);
-      await getCountryInfo(countryData.data);
-      await addCityMarkers(countryData.data.iso2, countryData.data.flag, map);
-    }
-  } catch(err) {
-    console.log(err);
-  }
-
-  $(".loader").toggle();
-  loading = false;
+  if (iso2 !== "default") {
+    selectCountry(iso2);
   }
 });
 

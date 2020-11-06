@@ -13,7 +13,7 @@ function icon(colour) {
   })
 }
 
-// Corrects longitude offset from infinite scrolling map
+// Corrects any longitude offset resulting from infinite scrolling of map
 function correctLongitude(lng) {
   if (Math.abs(lng) === 180) lng += 0.000000001;
   while (lng > 180) { lng -= 360 }
