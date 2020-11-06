@@ -83,7 +83,7 @@ layerControl.addTo(map);
 scaleControl.addTo(map);
 flyToLocationControl.addTo(map);
 centreMapControl.addTo(map);
-attributionToggleControl.addTo(map);
+// attributionToggleControl.addTo(map);
 
 // Adds a close button to layer control. It's hacky but it works.
 $(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
