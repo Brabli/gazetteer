@@ -85,7 +85,7 @@ async function getCountryInfo(data) {
 }
 
 
-/* Add city markers to map */
+/* Fetches city info and adds city markers to map. */
 async function addCityMarkers(iso2, flag, map) {
   let cityInfoJson;
   const cityInfoStored = sessionStorage.getItem(`cities_${iso2}`);
@@ -104,98 +104,91 @@ async function addCityMarkers(iso2, flag, map) {
     cityInfoJson = JSON.parse(cityInfoStored);
   }
 
-  // Promise all with map() instead of a loop as this makes the weather calls concurrent, thus speeding up the process of fetching the weather greatly.
+  // Promise all with map() instead of a loop as this makes the weather calls concurrent, thus greatly speeding up the process of fetching the weather.
   await Promise.all(
-  cityInfoJson.map(async city => {
+    cityInfoJson.map(async city => {
 
-    let weather;
-    // Key to weather data looks like "ireland_dublin_weather"
-    weather = sessionStorage.getItem(`${city.country}_${city.name}_weather`);
-    if (!weather) {
-      try {
-        const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
-        weather = await weatherInfo.json();
-        sessionStorage.setItem(`${city.country}_${city.name}_weather`, JSON.stringify(weather));
-      } catch(err) {
-        console.log(err);
+      let weather;
+      // Key to weather data looks like "ireland_dublin_weather"
+      weather = sessionStorage.getItem(`${city.country}_${city.name}_weather`);
+      if (!weather) {
+        try {
+          const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
+          weather = await weatherInfo.json();
+          sessionStorage.setItem(`${city.country}_${city.name}_weather`, JSON.stringify(weather));
+        } catch(err) {
+          console.log(err);
+        }
+      } else {
+        weather = JSON.parse(weather);
       }
-    } else {
-      weather = JSON.parse(weather);
-    }
 
-    // Early return if weather is not available
-    if (weather.status !== "ok") return false;
+      // Early return if weather is not available
+      if (weather.status !== "ok") return false;
 
-    // Create markers with appropriate data and html.
-    const cityMarker = L.marker([city.lat, city.long], {
-      icon: city.isCapital ? icon("red") : icon("blue")
-    })
-    .bindPopup(`
-    <div class="city-popup" id="${city.name}">
-      <h2 class="city-name text-shadow">${city.name}${city.isCapital ? " <span class=\"star\">&#9733;</span>" : ""}</h2>
-      <div class="center">
-        <h4 class="city-country-name text-shadow">${city.country}</h4>
-        <span class="flag">${flag}</span>
-      </div>
-   
-      <table class="quick-info-table">
-        <tr>
-          <th>Population:</th>
-          <td>${city.population.toLocaleString()}</td>
-        </tr>
-        <tr>
-          <th>Latitude:</th>
-          <td>${city.lat}°</td>
-        </tr>
-        <tr id="quick-longitude">
-          <th>Longitude:</th>
-          <td>${city.long}°</td>
-        </tr>
-      </table>
+      // Create markers with appropriate data and html.
+      const cityMarker = L.marker([city.lat, city.long], {
+        icon: city.isCapital ? icon("red") : icon("blue")
+      }).bindPopup(`
+      
+      <div class="city-popup" id="${city.name}">
+        <h2 class="city-name big-text-shadow">${city.name}${city.isCapital ? " <span class=\"star\">&#9733;</span>" : ""}</h2>
+        <div class="center">
+          <h4 class="city-country-name text-shadow">${city.country}</h4>
+          <span class="flag">${flag}</span>
+        </div>
     
-      <h4 class="weather-title text-shadow">Local Weather</h4>
-      <table class="weather-table">
-        <tr>
-          <th>Condition:</th>
-          <td>${weather.condition}</td>
-        </tr>
-        <tr>
-          <th>Cloud Cover:</th>
-          <td>${weather.cloudCover}%</td>
-        </tr>  
-        <tr>
-          <th>Temperature:</th>
-          <td>${weather.temp}&#8451;</td>
-        </tr>
-        <tr>
-          <th>Humidity:</th>
-          <td>${weather.humidity}%</td>
-        </tr>
-        <tr id="windspeed">
-          <th>Wind Speed:</th>
-          <td>${weather.windSpeed}mph<br>${weather.windStatement}</td>
-      </tr>      
-      </table>
-    </div>
-    `, {autoPan: false});
+        <table class="quick-info-table">
+          <tr>
+            <th>Population:</th>
+            <td>${city.population.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <th>Latitude:</th>
+            <td>${city.lat}°</td>
+          </tr>
+          <tr id="quick-longitude">
+            <th>Longitude:</th>
+            <td>${city.long}°</td>
+          </tr>
+        </table>
+      
+        <h4 class="weather-title text-shadow">Local Weather</h4>
+        <table class="weather-table">
+          <tr>
+            <th>Condition:</th>
+            <td>${weather.condition}</td>
+          </tr>
+          <tr>
+            <th>Cloud Cover:</th>
+            <td>${weather.cloudCover}%</td>
+          </tr>  
+          <tr>
+            <th>Temperature:</th>
+            <td>${weather.temp}&#8451;</td>
+          </tr>
+          <tr>
+            <th>Humidity:</th>
+            <td>${weather.humidity}%</td>
+          </tr>
+          <tr id="windspeed">
+            <th>Wind Speed:</th>
+            <td>${weather.windSpeed}mph<br>${weather.windStatement}</td>
+        </tr>      
+        </table>
+      </div>
+      `, {autoPan: true}
+      );
 
+      // Add marker to map
+      cityMarker.addTo(map);
 
-    cityMarker.addTo(map);
-
-    // Show popup on mouseover
-    cityMarker.on('mouseover', function(e) {
-      cityMarker.openPopup();
-    });
-    // Remove popup on mouseout
-    cityMarker.on('mouseout', function(e) {
-      cityMarker.closePopup();
-    });
-
-    cityMarker.on("click", function(e) {
-      cityMarker.openPopup();
-    });
- })
-);
+      // Add listen that enables hovering functionality
+      cityMarker.on('mouseover', function(e) {
+        cityMarker.openPopup();
+      });
+    })
+  );
 }
 
 export { fetchCountry, fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo };
