@@ -367,6 +367,10 @@ img {
   border-radius: 5px;
 }
 
+.leaflet-control-layers-expanded {
+  background-color: var(--button-grey);
+}
+
 /* MEDIA QUERIES */
 
 /* Changes country info box to not take up the whole of the bottom of the screen */
