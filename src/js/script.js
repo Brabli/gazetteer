@@ -23,6 +23,9 @@ const map = L.map('map', {
   maxZoom: 17,
   minZoom: 1.5,
   maxBoundsViscosity: 1.0,
+  renderer: L.canvas({
+    padding: 1.0
+  }),
   attributionControl: false,
   zoomControl: false
 }).fitWorld();
