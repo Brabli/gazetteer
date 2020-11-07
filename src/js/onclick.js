@@ -104,7 +104,8 @@ async function addCityMarkers(iso2, flag, map) {
     cityInfoJson = JSON.parse(cityInfoStored);
   }
 
-  // Promise all with map() instead of a loop as this makes the weather calls concurrent, thus greatly speeding up the process of fetching the weather.
+  // Promise all with map() instead of a loop as this makes the weather calls concurrent,
+  // thus greatly speeding up the process of fetching the weather.
   await Promise.all(
     cityInfoJson.map(async city => {
 
@@ -128,7 +129,7 @@ async function addCityMarkers(iso2, flag, map) {
 
       // Create markers with appropriate data and html.
       const cityMarker = L.marker([city.lat, city.long], {
-        icon: city.isCapital ? icon("red") : icon("blue")
+        icon: icon(city.isCapital)
       }).bindPopup(`
       
       <div class="city-popup" id="${city.name}">
@@ -183,10 +184,14 @@ async function addCityMarkers(iso2, flag, map) {
       // Add marker to map
       cityMarker.addTo(map);
 
-      // Add listen that enables hovering functionality
-      cityMarker.on('mouseover', function(e) {
-        cityMarker.openPopup();
-      });
+      // Add listen that enables popup show on hover.
+      // Timeout exists so hover doesn't apply instantly upon load. This could cause the map to
+      // jump about if the mouse happened to be over the markers the instant they loaded.
+      setTimeout(() => {
+        cityMarker.on('mouseover', function(e) {
+          cityMarker.openPopup();
+        });
+      }, 200)
     })
   );
 }

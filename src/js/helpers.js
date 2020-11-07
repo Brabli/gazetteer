@@ -1,14 +1,16 @@
 // Returns a custom marker.
-function icon(colour) {
+function icon(isCapitalCity) {
   let icon, shape, trueColour;
-  if (colour === "blue") {
-    icon = "fa-building";
-    shape = "circle";
-    trueColour = "rgb(0,55,92)";
-  } else {
+  if (isCapitalCity) {
+    // Capital city styles
     icon = "fa-city";
     shape = "star";
     trueColour = "#8a0303";
+  } else {
+    // Non capital city styles
+    icon = "fa-building";
+    shape = "circle";
+    trueColour = "rgb(0,55,92)";
   }
   return L.ExtraMarkers.icon({
     icon: icon,
