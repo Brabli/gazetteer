@@ -341,7 +341,7 @@ img {
 /* Attribution Styling */
 .leaflet-container .leaflet-control-attribution {
   font-size: 0.5rem;
-  border-top-left-radius: 10px;
+  border-top-left-radius: 0.5rem;
 }
 .leaflet-bottom, .leaflet-right {
   margin-left: 8rem;
@@ -366,6 +366,7 @@ img {
   background-color: var(--button-grey);
   border-radius: 5px;
 }
+
 /* MEDIA QUERIES */
 
 /* Changes country info box to not take up the whole of the bottom of the screen */
@@ -377,6 +378,12 @@ img {
     width: 20rem;
     border-right: 2px solid var(--border-blue);
     border-top-right-radius: 0.5rem;
+  }
+}
+/* Shifts button margins to be closer to edge */
+@media only screen and (max-width: 429px) {
+  .leaflet-top .leaflet-control {
+    margin: 5px 5px 0;
   }
 }
 
