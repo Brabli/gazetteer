@@ -27,7 +27,7 @@ img {
   --grey-text: #a8b5c3;
   --dark-blue: rgb(0,55,92);
   --blue: rgb(3,70,118);
-  
+  --button-grey: #ececec;
 }
 
 /* Generic Text Shadow */
@@ -35,7 +35,11 @@ img {
   text-shadow: 1px 2px 2px rgba(0,0,0,0.3);
 }
 
-/* Inline box shadow */
+.big-text-shadow {
+  text-shadow: -2px 1px 5px rgba(0, 0, 0, 1);
+}
+
+/* Inset box shadow */
 .nav-box-shadow {
   -webkit-box-shadow: 0px -13px 6px 16px rgba(0,0,0,0.75);
   -moz-box-shadow: 0px -13px 6px 16px rgba(0,0,0,0.75);
@@ -133,7 +137,7 @@ img {
 }
 
 .star {
-  color: yellow;
+  color: rgb(255, 255, 59);
 }
 
 .city-name {
@@ -173,7 +177,7 @@ img {
   margin: 0.1rem 0;
 }
 .quick-info-table td, .quick-info-table th {
-  line-height: 0.8rem;
+  line-height: 0.9rem;
   width: 50%;
 }
 .weather-title {
@@ -340,9 +344,9 @@ img {
   margin-left: 8rem;
 }
 
-/* Button colour override */
+/* Left button colour override */
 .leaflet-bar button, .leaflet-bar button:hover {
-  background-color: #e8e8e8;
+  background-color: var(--button-grey);
 }
 
 /* Makes it so the cursor doesn't change to pointer when hovering over scale control */
@@ -351,22 +355,21 @@ img {
 }
 /* Make scale lines a bit whiter to match the buttons */
 .leaflet-control-scale-line {
-  background-color: #e8e8e8cf;
+  background-color: var(--button-grey);
+  opacity: 0.8;
 }
 /* Make layer button slightly greyer */
 .leaflet-retina .leaflet-control-layers-toggle {
-  background-color: #e8e8e8cf;
+  background-color: var(--button-grey);
   border-radius: 5px;
 }
 /* MEDIA QUERIES */
 
 /* Changes country info box to not take up the whole of the bottom of the screen */
 @media only screen and (min-width: 430px) {
-
   #modal-box {
     width: 20rem;
   }
-
   .content {
     width: 20rem;
     border-right: 2px solid var(--border-blue);
@@ -381,15 +384,12 @@ img {
     background: rgb(0, 118, 236);
     background: linear-gradient(0deg, var(--blue) 0%, rgb(0, 118, 236, 1) 100%);
   }
-
   #modal-box {
-    /* width: 25rem; */
     width: 26rem;
   }
   .content {
     width: 26rem;
   }
-
   .content td, .content th {
     padding: 0.1rem;
     font-size: 1.2rem;
