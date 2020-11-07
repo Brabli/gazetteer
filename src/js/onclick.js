@@ -132,12 +132,12 @@ async function addCityMarkers(iso2, flag, map) {
     })
     .bindPopup(`
     <div class="city-popup" id="${city.name}">
-      <h2 class="city-name">${city.name}${city.isCapital ? " &#9733;" : ""}</h2>
+      <h2 class="city-name text-shadow">${city.name}${city.isCapital ? " <span class=\"star\">&#9733;</span>" : ""}</h2>
       <div class="center">
-        <h4 class="city-country-name">${city.country}</h4>
+        <h4 class="city-country-name text-shadow">${city.country}</h4>
         <span class="flag">${flag}</span>
       </div>
-      <hr />
+   
       <table class="quick-info-table">
         <tr>
           <th>Population:</th>
@@ -145,15 +145,15 @@ async function addCityMarkers(iso2, flag, map) {
         </tr>
         <tr>
           <th>Latitude:</th>
-          <td>${city.lat}</td>
+          <td>${city.lat}°</td>
         </tr>
-        <tr>
+        <tr id="quick-longitude">
           <th>Longitude:</th>
-          <td>${city.long}</td>
+          <td>${city.long}°</td>
         </tr>
       </table>
-      <hr />
-      <h4 class="weather-title">Local Weather</h4>
+    
+      <h4 class="weather-title text-shadow">Local Weather</h4>
       <table class="weather-table">
         <tr>
           <th>Condition:</th>
@@ -171,17 +171,17 @@ async function addCityMarkers(iso2, flag, map) {
           <th>Humidity:</th>
           <td>${weather.humidity}%</td>
         </tr>
-        <tr>
+        <tr id="windspeed">
           <th>Wind Speed:</th>
-          <td>${weather.windSpeed}mph - ${weather.windStatement}</td>
+          <td>${weather.windSpeed}mph<br>${weather.windStatement}</td>
       </tr>      
       </table>
     </div>
-    `);
+    `, {autoPan: false});
 
 
     cityMarker.addTo(map);
-    
+
     // Show popup on mouseover
     cityMarker.on('mouseover', function(e) {
       cityMarker.openPopup();
