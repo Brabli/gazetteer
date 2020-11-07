@@ -22,6 +22,8 @@ img {
 
 :root {
   --border-blue: rgb(9, 23, 50);
+  --table-divider-grey: rgba(255, 255, 255, 0.168);
+  --grey-text: #a8b5c3;
 }
 
 .nav-box-shadow {
@@ -100,53 +102,47 @@ img {
   100% { transform: rotate(360deg); }
 }
 
-/* City Info Wrapper */
+
+
+
+
+
+/* City Info Containers */
 .leaflet-popup-content {
-  max-width: 10rem;
+  max-width: 12rem;
   padding: 0;
   margin: 0.1rem 0.5rem;
+  background: rgb(0,55,92);
+  background: linear-gradient(180deg, rgba(0,55,92,1) 33%, rgba(3,70,118,1) 100%);
+  color: aliceblue;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
 }
 .leaflet-popup-content-wrapper {
+  border: 2px solid var(--border-blue);
   padding: 0;
+  background: rgb(0,55,92);
+  background: linear-gradient(180deg, rgba(0,55,92,1) 33%, rgba(3,70,118,1) 100%);
+}
+
+.star {
+  color: yellow;
 }
 
 .city-name {
+  margin-top: 0.2rem;
   text-align: center;
-  font-weight: bold;
-  position: relative;
-  top: 0.3rem;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
 }
 
 .city-country-name {
   text-align: center;
   font-style: italic;
+  font-size: 0.8rem;
   display: inline;
-}
-
-/* Population, lat, long */
-.quick-info-table {
-  margin: 0.1rem 0;
-}
-.quick-info-table td, .quick-info-table th {
-  line-height: 0.8rem;
-}
-.quick-info-table th {
-  padding-right: 1.3rem;
-}
-
-/* Dividing lines */
-.city-popup hr {
-  width: 90%;
-  margin: 0.3rem 0;
-  margin: 0 auto;
-}
-
-/*  */
-.center {
-  text-align: center;
-  margin: 0.3rem auto;
-  display: block;
-  line-height: 0.7;
+  padding-top: 0.5rem;
+  color: var(--grey-text);
 }
 
 .flag {
@@ -157,22 +153,82 @@ img {
   top: 0.2rem;
 }
 
-.weather-title {
-  margin: 0.1rem 0;
+/* This centres city country name and flag in it's container */
+.center {
   text-align: center;
-  font-style: italic;
+  margin: 0.1rem 0 0.4rem;
+  line-height: 0.7;
+}
+
+
+
+/* "Quick Info" Table (pop, lat, lng) */
+.quick-info-table {
+  width: 100%;
+  margin: 0.1rem 0;
+}
+
+.quick-info-table td, .quick-info-table th {
+  line-height: 0.8rem;
+  width: 50%;
+}
+
+/* Dividing lines */
+.city-popup hr {
+  width: 100%;
+  height: 1px;
+  margin: 0 auto;
+  color: var(--border-blue);
+}
+
+
+
+.weather-title {
+  margin: 0.6rem 0 0.1rem;
+  text-align: center;
   text-decoration: underline;
+  color: var(--grey-text);
 }
 
 .quick-info-table td {
   text-align: center;
 }
 
-.weather-table td {
-  text-align: center;
-  border: 1px solid black;
+/* Weather Table */
+.weather-table, .quick-info-table {
+  border-collapse: collapse;
 }
 
+.weather-table td {
+  text-align: center;
+}
+
+.weather-table td, .weather-table tr {
+  width: 50%;
+}
+
+.weather-table tr, .quick-info-table tr {
+  border-bottom: 1px solid var(--table-divider-grey);
+}
+
+#windspeed {
+  border-bottom: none;
+}
+
+/* Arrowtip colour */
+.leaflet-popup-tip {
+  background-color: var(--border-blue);
+}
+
+
+
+
+
+
+
+
+
+/* Makes it so the cursor doesn't change to pointer when hovering over scale control */
 .leaflet-control-scale {
   cursor: grab;
 }
@@ -237,7 +293,7 @@ img {
   text-align: left;
 }
 .content tr {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.168);
+  border-bottom: 1px solid var(--table-divider-grey);
 }
 .content tfoot tr {
   border-bottom: none;
