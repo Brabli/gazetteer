@@ -14,6 +14,7 @@ const hackedEPSG3857 = L.Util.extend(L.CRS.EPSG3857, {
   projection: hackedSphericalMercator
 });
 
+
 /* INIT MAP SETUP STUFF */
 /*~~~~~~~~~~~~~~~~~~~~~~*/
 // Create map
@@ -24,7 +25,8 @@ const map = L.map('map', {
   minZoom: 1.5,
   maxBoundsViscosity: 1.0,
   renderer: L.canvas({
-    padding: 1.0
+    // 0.9 appears to be smoother than 1.0? Still looks good though.
+    padding: 0.9
   }),
   attributionControl: false,
   zoomControl: false
@@ -63,19 +65,20 @@ const centreMapControl = L.easyButton('fa-expand', () => {
   map.flyTo(new L.LatLng(45, -5), 2);
 }, "Centre Map", {position: "topleft"});
 
+// Attribution Control
 const attControl = L.control.attribution({
   prefix: "",
   position: "bottomright"
 });
 
+
 /* ADD CONTROLS TO MAP */
 /*~~~~~~~~~~~~~~~~~~~~~~*/
-attControl.addTo(map);
 layerControl.addTo(map);
 scaleControl.addTo(map);
 flyToLocationControl.addTo(map);
 centreMapControl.addTo(map);
-
+attControl.addTo(map);
 
 // Adds a close button to layer control. It's hacky but it works.
 $(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
