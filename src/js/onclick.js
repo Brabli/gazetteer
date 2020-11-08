@@ -51,9 +51,30 @@ function addGeojsonToMap(geojson, map) {
     }
   });
   geojsonFeature.addTo(map);
-  map.fitBounds(geojsonFeature.getBounds());
+  // Manually centre map for countries that cross the antimeridian line, EG America and Russia.
+  const iso2 = geojson.features[0].properties.cca2;
+  switch (iso2) {
+    // USA
+    case "us":
+      map.setView([40, -118], 2);
+      break;
+    // RUSSIA
+    case "ru":
+      map.setView([60, 80], 2);
+      break;
+    // NEW ZEALAND
+    case "nz":
+      map.setView([-42, 173], 5);
+      break;
+    // FIJI
+    case "fj":
+      map.setView([-17.5, 178.5], 7);
+      break;
+    // EVERY OTHER COUNTRY
+    default:
+      map.fitBounds(geojsonFeature.getBounds());
+  }
 }
-
 /* Fetch actual country info for info box and assign values to elements */
 async function getCountryInfo(data) {
   try {
