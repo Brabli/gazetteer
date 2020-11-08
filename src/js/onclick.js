@@ -231,7 +231,7 @@ async function getCountryImages(countryName) {
   console.log(htmlImageString);
 
   $(".image-container").html(htmlImageString);
-  
+  // Adds event listener to generated circle images
   $(".circle-image").on("click", (e) => {
     const imageLink = $(e.currentTarget).attr("src");
     $(".big-image").html(`<img src=${imageLink} />`);
