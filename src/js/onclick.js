@@ -215,4 +215,35 @@ async function addCityMarkers(iso2, flag, map) {
   );
 }
 
-export { fetchCountry, fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo };
+async function getCountryImages(countryName) {
+  const imagesUrl = await fetch(`php/getCountryImages.php?country=${countryName}`);
+  const imagesUrlRes = await imagesUrl.json();
+  console.log(imagesUrlRes);
+
+  const imageUrls = imagesUrlRes["hits"];
+
+  let htmlImageString = "";
+  for (let i = 0; i < imageUrls.length; i++) {
+//<img class="circle-image" src="img/england.jpg" />
+    const imgHtml = `<img class="circle-image" src=${imageUrls[i]["largeImageURL"]}" />`;
+    htmlImageString += imgHtml;
+  }
+  console.log(htmlImageString);
+
+  $(".image-container").html(htmlImageString);
+  
+  $(".circle-image").on("click", (e) => {
+    const imageLink = $(e.currentTarget).attr("src");
+    $(".big-image").html(`<img src=${imageLink} />`);
+    $(".big-image-container").show();
+    $(".black-screen").show();
+    $(".close-button").show();
+  });
+  
+}
+
+
+
+
+
+export { fetchCountry, fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo, getCountryImages};

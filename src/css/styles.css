@@ -115,7 +115,86 @@ img {
   100% { transform: rotate(360deg); }
 }
 
+.image-container {
+  height: 3.5rem;
+  pointer-events: none;
+  position: absolute;
+  top: 2.7rem;
+  margin-left: 6.5rem;
+  margin-right: 4rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
 
+.circle-image {
+  cursor: pointer;
+  object-fit: cover;
+  pointer-events: visible;
+  z-index: 11;
+  margin: 0.2rem;
+  height: 3rem;
+  width: 3em;
+  border-radius: 50%;
+  border: 2px solid black;
+  transition: 0.2s;
+}
+
+.circle-image:hover {
+  transform: scale(1.1);
+  
+}
+
+.big-image-container {
+  max-width: 24rem;
+  
+  /* border: 2px solid var(--border-blue); */
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  margin-left: -12rem;
+  z-index: 10;
+}
+
+.big-image img {
+  object-fit: cover;
+  max-height: 20%;
+  border: 3px solid var(--border-blue);
+}
+
+.close-button {
+  display: inline-block;
+  position: relative;
+  left: 96%;
+  content: "x";
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  color: rgb(255, 255, 255);
+  margin-right: 0.1rem;
+  cursor: pointer;
+}
+
+
+.black-screen {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.483);
+}
+/* .big-image-container::after {
+  content: "";
+  position: fixed;
+  z-index: 9;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.381);
+} */
 
 
 

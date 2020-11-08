@@ -1,7 +1,7 @@
 // Module imports
 import { basemaps, overlays } from "./tiles.js";
 import { teleport, removeLayers, populateSelect } from "./helpers.js";
-import { fetchGeojson, fetchCountry, addGeojsonToMap, addCityMarkers, getCountryInfo } from "./onclick.js";
+import { fetchGeojson, fetchCountry, addGeojsonToMap, addCityMarkers, getCountryInfo, getCountryImages } from "./onclick.js";
 
 // Global loading variable
 let loading = false;
@@ -101,12 +101,14 @@ async function selectCountry(input) {
     const countryData = await fetchCountry(input);
     // Check to see if user is indeed over a country
     if (countryData.message === "ok") {
-      const {iso3, iso2, flag} = countryData.data;
+      const {iso3, iso2, flag, countryName} = countryData.data;
       const geojson = await fetchGeojson(iso3);
       teleport(map);
       addGeojsonToMap(geojson, map);
       // Fetches the info used in the Country Info box.
       await getCountryInfo(countryData.data);
+      // Fetches country images
+      await getCountryImages(countryName);
       // Fetches city and weather data and appends markers to the map.
       await addCityMarkers(iso2, flag, map);
     } else {
@@ -142,7 +144,7 @@ function onError(err) {
 
 selectUserCountryOnLoad();
 populateSelect();
-
+$(".close-button").hide();
 
 //~~~~~~~~~~~~~~~~~~~~~~~~
 /* EVENT HANDLERS BELOW */
@@ -174,3 +176,20 @@ $("#tab").on("click", () => {
 window.addEventListener("unload", () => {
   localStorage.clear();
 });
+
+
+// Opens circle images on click
+$(".circle-image").on("click", (e) => {
+  const imageLink = $(e.currentTarget).attr("src");
+  $(".big-image").html(`<img src=${imageLink} />`);
+  $(".big-image-container").show();
+  $(".black-screen").show();
+  $(".close-button").show();
+});
+
+// Closes large images
+$(".close-button").on("click", () => {
+  $(".big-image-container").hide();
+  $(".black-screen").hide();
+})
+
