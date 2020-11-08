@@ -129,9 +129,8 @@ async function addCityMarkers(iso2, flag, map) {
   // thus greatly speeding up the process of fetching the weather.
   await Promise.all(
     cityInfoJson.map(async city => {
-
-      let weather;
       // Key to weather data looks like "ireland_dublin_weather"
+      let weather;
       weather = sessionStorage.getItem(`${city.country}_${city.name}_weather`);
       if (!weather) {
         try {
@@ -206,8 +205,7 @@ async function addCityMarkers(iso2, flag, map) {
       cityMarker.addTo(map);
 
       // Add listen that enables popup show on hover.
-      // Timeout exists so hover doesn't apply instantly upon load. This could cause the map to
-      // jump about if the mouse happened to be over the markers the instant they loaded.
+      // Timeout exists so hover doesn't apply instantly upon load. This could cause the map to awkwardly jump about if the mouse happened to be over the markers the instant they loaded.
       setTimeout(() => {
         cityMarker.on('mouseover', function(e) {
           cityMarker.openPopup();
