@@ -116,11 +116,11 @@ img {
 }
 
 .image-container {
-  height: 3.5rem;
+  height: 3.3rem;
   pointer-events: none;
   position: absolute;
   top: 2.7rem;
-  margin-left: 6.5rem;
+  /* margin-left: 6.5rem; */
   margin-right: 4rem;
   display: flex;
   justify-content: space-between;
@@ -133,7 +133,7 @@ img {
   object-fit: cover;
   pointer-events: visible;
   z-index: 11;
-  margin: 0.2rem;
+  margin: 0.1rem;
   height: 3rem;
   width: 3em;
   border-radius: 50%;
@@ -143,13 +143,10 @@ img {
 
 .circle-image:hover {
   transform: scale(1.1);
-  
 }
 
 .big-image-container {
   max-width: 24rem;
-  
-  /* border: 2px solid var(--border-blue); */
   position: absolute;
   top: 30%;
   left: 50%;
@@ -174,7 +171,6 @@ img {
   cursor: pointer;
 }
 
-
 .black-screen {
   display: none;
   position: absolute;
@@ -185,17 +181,6 @@ img {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.483);
 }
-/* .big-image-container::after {
-  content: "";
-  position: fixed;
-  z-index: 9;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.381);
-} */
-
 
 
 
@@ -428,12 +413,10 @@ img {
 .leaflet-bottom, .leaflet-right {
   margin-left: 8rem;
 }
-
 /* Left button colour override */
 .leaflet-bar button, .leaflet-bar button:hover {
   background-color: var(--button-grey);
 }
-
 /* Makes it so the cursor doesn't change to pointer when hovering over scale control */
 .leaflet-control-scale {
   cursor: grab;
@@ -448,10 +431,21 @@ img {
   background-color: var(--button-grey);
   border-radius: 5px;
 }
-
+/* Layer control expanded background */
 .leaflet-control-layers-expanded {
   background-color: var(--button-grey);
 }
+
+/* Scale control overrides */
+.leaflet-bottom .leaflet-control-scale {
+  margin-right: 0px;
+  margin-bottom: 0px;
+}
+
+.leaflet-control-scale-line {
+  text-align: right;
+}
+
 
 /* MEDIA QUERIES */
 
