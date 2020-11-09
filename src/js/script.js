@@ -44,9 +44,16 @@ const layerControl = L.control.layers(basemaps, overlays, {
 });
 
 // Scale Control
-const scaleControl = L.control.scale({
-  position: "topleft",
-  maxWidth: 100
+const scaleControlKm = L.control.scale({
+  position: "bottomright",
+  maxWidth: 100,
+  metric: false
+});
+
+const scaleControlMiles = L.control.scale({
+  position: "bottomright",
+  maxWidth: 100,
+  imperial: false
 });
 
 // Fly to Location Control
@@ -74,11 +81,13 @@ const attControl = L.control.attribution({
 
 /* ADD CONTROLS TO MAP */
 /*~~~~~~~~~~~~~~~~~~~~~~*/
+attControl.addTo(map);
 layerControl.addTo(map);
-scaleControl.addTo(map);
+scaleControlKm.addTo(map);
+scaleControlMiles.addTo(map);
 flyToLocationControl.addTo(map);
 centreMapControl.addTo(map);
-attControl.addTo(map);
+
 
 // Adds a close button to layer control. It's hacky but it works.
 $(".leaflet-control-layers-base").prepend('<a class="leaflet-popup-close-button" id="layer-control-close-button" href="#close">×</a>')
@@ -172,12 +181,6 @@ $("#tab").on("click", () => {
   $("#arrow").toggleClass("flip");
 });
 
-// Clears local storage on window close
-window.addEventListener("unload", () => {
-  localStorage.clear();
-});
-
-
 // Opens circle images on click
 $(".circle-image").on("click", (e) => {
   const imageLink = $(e.currentTarget).attr("src");
@@ -193,3 +196,7 @@ $(".close-button").on("click", () => {
   $(".black-screen").hide();
 })
 
+// Clears local storage on window close
+window.addEventListener("unload", () => {
+  localStorage.clear();
+});
