@@ -25,8 +25,8 @@ const map = L.map('map', {
   minZoom: 1.5,
   maxBoundsViscosity: 1.0,
   renderer: L.canvas({
-    // 0.9 appears to be smoother than 1.0? Still looks good though.
-    padding: 0.9
+    // 0.5 is a good balance between performance and benefit
+    padding: 0.5
   }),
   attributionControl: false,
   zoomControl: false
@@ -111,15 +111,17 @@ async function selectCountry(input) {
     // Check to see if user is indeed over a country
     if (countryData.message === "ok") {
       const {iso3, iso2, flag, countryName} = countryData.data;
-      const geojson = await fetchGeojson(iso3);
-      teleport(map);
-      addGeojsonToMap(geojson, map);
       // Fetches the info used in the Country Info box.
       getCountryInfo(countryData.data);
       // Fetches country images
       getCountryImages(countryName);
       // Fetches city and weather data and appends markers to the map.
       addCityMarkers(iso2, flag, map);
+      // Geojson last as it's blocking
+      const geojson = await fetchGeojson(iso3);
+      teleport(map);
+      addGeojsonToMap(geojson, map);
+
     } else {
       console.log(countryData.message);
     }
