@@ -215,31 +215,34 @@ async function addCityMarkers(iso2, flag, map) {
   );
 }
 
+
+
+// imageUrls[i]["largeImageURL"]
+// imageUrls[i]["webformatURL"]
+// imageUrls[i]["previewURL"]
+// <img class="circle-image" src="img/england.jpg" />
+
 async function getCountryImages(countryName) {
+  // Request images and unpack results
   const imagesUrl = await fetch(`php/getCountryImages.php?country=${countryName}`);
-  const imagesUrlRes = await imagesUrl.json();
-  console.log(imagesUrlRes);
-
-  const imageUrls = imagesUrlRes["hits"];
-
+  const { hits: imageUrls } = await imagesUrl.json();
+  // Loop through returned objects assigning appropriate html
   let htmlImageString = "";
   for (let i = 0; i < imageUrls.length; i++) {
-//<img class="circle-image" src="img/england.jpg" />
-    const imgHtml = `<img class="circle-image" src=${imageUrls[i]["largeImageURL"]}" />`;
+    console.log(imageUrls[i]);
+    const imgHtml = `<img class="circle-image" src="${imageUrls[i]["previewURL"]}" data-image-url="${imageUrls[i]["webformatURL"]}" />`;
     htmlImageString += imgHtml;
   }
-  console.log(htmlImageString);
-
+  // Append the constructed html string to it's container
   $(".image-container").html(htmlImageString);
-  // Adds event listener to generated circle images
+  // Adds onclick event listener to generated circle images
   $(".circle-image").on("click", (e) => {
-    const imageLink = $(e.currentTarget).attr("src");
+    const imageLink = $(e.currentTarget).attr("data-image-url");
     $(".big-image").html(`<img src=${imageLink} />`);
     $(".big-image-container").show();
     $(".black-screen").show();
     $(".close-button").show();
   });
-  
 }
 
 
