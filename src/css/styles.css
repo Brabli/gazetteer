@@ -28,6 +28,7 @@ img {
   --dark-blue: rgb(0,55,92);
   --blue: rgb(3,70,118);
   --button-grey: #ececec;
+  --navbar-height: 2.5rem;
 }
 
 /* Generic Text Shadow */
@@ -48,8 +49,8 @@ img {
 
 #map {
   width: 100vw;
-  /* 100% instead of 100vh to fix address bar on chrome mobile covering part of the map up. 2.5rem is height of navbar.  */
-  height: calc(100% - 2.5rem);
+  /* 100% instead of 100vh to fix address bar on chrome mobile covering part of the map up. */
+  height: calc(100% - var(--navbar-height));
   position: absolute;
   bottom: 0;
   /* z-index needs to be -1 so navbar's box shadow is visible */
@@ -65,7 +66,7 @@ img {
   -moz-user-select: none;
   cursor: default;
   z-index: 2;
-  height: 2.5rem;
+  height: var(--navbar-height);
   background: linear-gradient(0deg, var(--dark-blue) 33%, var(--blue) 100%);
   border-bottom: 2px solid var(--border-blue);
   display: flex;
@@ -116,12 +117,13 @@ img {
 }
 
 .image-container {
-  height: 3.3rem;
+  background-image: linear-gradient(var(--dark-blue) 0%, transparent 80%);
+  width: 100%;
+  height: 4rem;
   pointer-events: none;
   position: absolute;
-  top: 2.7rem;
-  /* margin-left: 6.5rem; */
-  margin-right: 4rem;
+  top: var(--navbar-height);
+  padding-top: 0.2rem;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -134,14 +136,22 @@ img {
   pointer-events: visible;
   z-index: 11;
   margin: 0.1rem;
+  /* Shoves away hidden circle images */
+  margin-bottom: 10rem;
   height: 3rem;
   width: 3em;
   border-radius: 50%;
   border: 2px solid black;
   transition: 0.2s;
+  box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.75);
 }
 
-.circle-image:hover {
+/* Move buttons closer to sides of app */
+.leaflet-top.leaflet-left, .leaflet-top.leaflet-right {
+  margin-top: 3.3rem;
+}
+
+.circle-image:hover, .circle-image:active {
   transform: scale(1.1);
 }
 
@@ -167,7 +177,6 @@ img {
   content: "x";
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: rgb(255, 255, 255);
-  margin-right: 0.1rem;
   cursor: pointer;
 }
 
@@ -182,7 +191,22 @@ img {
   background-color: rgba(0, 0, 0, 0.483);
 }
 
-
+/* Image styling */
+@media only screen and (min-width: 800px) {
+  .image-container {
+    max-width: 100%;
+    background-image: none;
+    padding: 0.5rem 3.9rem 0rem 3rem;
+    justify-content: flex-start;
+  }
+  /* What this do again */
+  .leaflet-top.leaflet-left, .leaflet-top.leaflet-right {
+    margin-top: 5px;
+  }
+  .circle-image {
+    margin-right: 0.7rem;
+  }
+}
 
 /* City Info Containers */
 .leaflet-popup-content {
@@ -284,6 +308,7 @@ img {
 
 
 #modal-box {
+  pointer-events: none;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: aliceblue;
   display: block;
@@ -294,6 +319,7 @@ img {
 }
 
 #tab {
+  pointer-events: all;
   -ms-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -321,6 +347,7 @@ img {
 }
 
 .content {
+  pointer-events: all;
   -webkit-box-shadow: inset 9px 4px 26px -9px rgba(0,0,0,0.75);
   -moz-box-shadow: inset 9px 4px 26px -9px rgba(0,0,0,0.75);
   box-shadow: inset 9px 4px 26px -9px rgba(0,0,0,0.75);
@@ -407,10 +434,11 @@ img {
 
 /* Attribution Styling */
 .leaflet-container .leaflet-control-attribution {
-  font-size: 0.5rem;
-  border-top-left-radius: 0.5rem;
+  pointer-events: none;
+  font-size: 0.4rem;
+  border-top-left-radius: 0.4rem;
 }
-.leaflet-bottom, .leaflet-right {
+.leaflet-bottom.leaflet-right {
   margin-left: 8rem;
 }
 /* Left button colour override */
@@ -426,28 +454,31 @@ img {
   background-color: var(--button-grey);
   opacity: 0.8;
 }
-/* Make layer button slightly greyer */
+/* Layer control button colour */
 .leaflet-retina .leaflet-control-layers-toggle {
   background-color: var(--button-grey);
   border-radius: 5px;
 }
-/* Layer control expanded background */
+/* Layer control expanded background colour */
 .leaflet-control-layers-expanded {
   background-color: var(--button-grey);
 }
 
-/* Scale control overrides */
+/* Push scale control to right of screen */
 .leaflet-bottom .leaflet-control-scale {
   margin-right: 0px;
   margin-bottom: 0px;
-}
-
-.leaflet-control-scale-line {
   text-align: right;
 }
 
+/* Shifts top buttons closer to edge of screen */
+.leaflet-top .leaflet-control {
+  margin: 5px 5px 0;
+}
 
+/* ~~~~~~~~~~~~~ */
 /* MEDIA QUERIES */
+/* ~~~~~~~~~~~~~ */
 
 /* Changes country info box to not take up the whole of the bottom of the screen */
 @media only screen and (min-width: 430px) {
@@ -459,11 +490,9 @@ img {
     border-right: 2px solid var(--border-blue);
     border-top-right-radius: 0.5rem;
   }
-}
-/* Shifts button margins to be closer to edge */
-@media only screen and (max-width: 429px) {
-  .leaflet-top .leaflet-control {
-    margin: 5px 5px 0;
+  /* Shifts attribution control margin so it's always visible */
+  .leaflet-bottom.leaflet-right {
+    margin-left: 20.5rem;
   }
 }
 
@@ -518,5 +547,8 @@ img {
   }
   .load-container {
     margin-left: 0rem;
+  }
+  .leaflet-bottom.leaflet-right {
+    margin-left: 6rem;
   }
 }
