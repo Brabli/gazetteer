@@ -198,7 +198,10 @@ async function addCityMarkers(iso2, flag, map) {
         </tr>      
         </table>
       </div>
-      `, {autoPan: true}
+      `, {
+        autoPan: true,
+        autoPanPadding: [65, 65]
+      }
       );
 
       // Add marker to map
