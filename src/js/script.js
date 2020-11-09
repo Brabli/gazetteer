@@ -115,11 +115,11 @@ async function selectCountry(input) {
       teleport(map);
       addGeojsonToMap(geojson, map);
       // Fetches the info used in the Country Info box.
-      await getCountryInfo(countryData.data);
+      getCountryInfo(countryData.data);
       // Fetches country images
-      await getCountryImages(countryName);
+      getCountryImages(countryName);
       // Fetches city and weather data and appends markers to the map.
-      await addCityMarkers(iso2, flag, map);
+      addCityMarkers(iso2, flag, map);
     } else {
       console.log(countryData.message);
     }
