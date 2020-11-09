@@ -4,7 +4,7 @@
   error_reporting(E_ALL);
 
   $country_name = $_GET["country"];
-  $url = "https://pixabay.com/api/?key=19032298-2540b463772fc5117abff186b&per_page=8&image_type=photo&orientation=horizontal&q=" . $country_name;
+  $url = "https://pixabay.com/api/?key=19032298-2540b463772fc5117abff186b&per_page=10&image_type=photo&orientation=horizontal&q=" . $country_name;
 
   // cURL to get country images
   $curl_images = curl_init();
