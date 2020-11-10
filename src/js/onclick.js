@@ -237,25 +237,31 @@ async function addCityMarkers(iso2, flag, map) {
 // <img class="circle-image" src="img/england.jpg" />
 
 async function getCountryImages(countryName) {
-  // Request images and unpack results
-  const imagesUrl = await fetch(`php/getCountryImages.php?country=${countryName}`);
-  const { hits: imageUrls } = await imagesUrl.json();
-  // Loop through returned objects assigning appropriate html
-  let htmlImageString = "";
-  for (let i = 0; i < imageUrls.length; i++) {
-    const imgHtml = `<img class="circle-image" src="${imageUrls[i]["previewURL"]}" data-image-url="${imageUrls[i]["largeImageURL"]}" />`;
-    htmlImageString += imgHtml;
+  // Request images
+  const imageObjects = await fetch(`php/getCountryImages.php?country=${countryName}`);
+  const imagesRes = await imageObjects.json();
+  // Make sure response is ok
+  if (imagesRes.status !== "ok") {
+    $(".image-container").html("");
+  } else {
+    // Loop through returned objects assigning appropriate html
+    let htmlImageString = "";
+    const imageUrls = imagesRes["hits"];
+    for (let i = 0; i < imageUrls.length; i++) {
+      const imgHtml = `<img class="circle-image" src="${imageUrls[i]["previewURL"]}" data-image-url="${imageUrls[i]["largeImageURL"]}" />`;
+      htmlImageString += imgHtml;
+    }
+    // Append the constructed html string to it's container
+    $(".image-container").html(htmlImageString);
+    // Adds onclick event listener to generated circle images
+    $(".circle-image").on("click", (e) => {
+      const imageLink = $(e.currentTarget).attr("data-image-url");
+      $(".big-image").html(`<img src=${imageLink} />`);
+      $(".big-image-container").show();
+      $(".black-screen").show();
+      $(".close-button").show();
+    });
   }
-  // Append the constructed html string to it's container
-  $(".image-container").html(htmlImageString);
-  // Adds onclick event listener to generated circle images
-  $(".circle-image").on("click", (e) => {
-    const imageLink = $(e.currentTarget).attr("data-image-url");
-    $(".big-image").html(`<img src=${imageLink} />`);
-    $(".big-image-container").show();
-    $(".black-screen").show();
-    $(".close-button").show();
-  });
 }
 
 
