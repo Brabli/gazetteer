@@ -40,7 +40,7 @@ async function fetchGeojson(iso3) {
   }
 }
 
-/* Add geojson to map and fit to screen. */
+/* Add geojson to map. Returns geojson feature */
 function addGeojsonToMap(geojson, map) {
   const geojsonFeature = L.geoJson(geojson, {
     style: {
@@ -51,8 +51,12 @@ function addGeojsonToMap(geojson, map) {
     }
   });
   geojsonFeature.addTo(map);
+  return geojsonFeature;
+}
+
+/* Sets the map view based on currently selected country */
+function setMapView(geojsonFeature, iso2, map) {
   // Manually centre map for countries that cross the antimeridian line, EG America and Russia.
-  const iso2 = geojson.features[0].properties.cca2;
   switch (iso2) {
     // USA
     case "us":
@@ -75,6 +79,7 @@ function addGeojsonToMap(geojson, map) {
       map.fitBounds(geojsonFeature.getBounds());
   }
 }
+
 /* Fetch actual country info for info box and assign values to elements */
 async function getCountryInfo(data) {
   try {
@@ -270,4 +275,4 @@ async function getCountryImages(countryName) {
 
 
 
-export { fetchCountry, fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo, getCountryImages};
+export { fetchCountry, fetchGeojson, addGeojsonToMap, addCityMarkers, getCountryInfo, getCountryImages, setMapView};
