@@ -120,9 +120,6 @@ async function selectCountry(input) {
       const geojson = await fetchGeojson(iso3);
       teleport(map);
       addGeojsonToMap(geojson, map);
-
-    } else {
-      console.log(countryData.message);
     }
   } catch(err) {
     console.log(err);
@@ -162,7 +159,6 @@ $(".close-button").hide();
 
 /* MOUSE CLICK HANDLER */
 map.on("click", async e => {
-  console.log("Click");
   selectCountry(e);
 });
 
