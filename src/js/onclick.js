@@ -213,7 +213,18 @@ async function addCityMarkers(iso2, flag, map) {
         cityMarker.on('mouseover', function(e) {
           cityMarker.openPopup();
         });
-      }, 200)
+      }, 200);
+      
+      // Prevents some odd behaviour with touch controls not opening popup on the first click, downside is clicking markers can't be used to close them again once opened.
+      cityMarker.on("click", () => {
+        const isOpen = cityMarker.isPopupOpen();
+        //console.log(isOpen);
+        if (!isOpen) {
+          cityMarker.openPopup();
+        } else {
+          cityMarker.closePopup();
+        }
+      })
     })
   );
 }
@@ -232,8 +243,7 @@ async function getCountryImages(countryName) {
   // Loop through returned objects assigning appropriate html
   let htmlImageString = "";
   for (let i = 0; i < imageUrls.length; i++) {
-    console.log(imageUrls[i]);
-    const imgHtml = `<img class="circle-image" src="${imageUrls[i]["previewURL"]}" data-image-url="${imageUrls[i]["webformatURL"]}" />`;
+    const imgHtml = `<img class="circle-image" src="${imageUrls[i]["previewURL"]}" data-image-url="${imageUrls[i]["largeImageURL"]}" />`;
     htmlImageString += imgHtml;
   }
   // Append the constructed html string to it's container
