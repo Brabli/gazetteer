@@ -50,11 +50,11 @@ const scaleControlKm = L.control.scale({
   metric: false
 });
 
-const scaleControlMiles = L.control.scale({
-  position: "bottomright",
-  maxWidth: 100,
-  imperial: false
-});
+// const scaleControlMiles = L.control.scale({
+//   position: "bottomright",
+//   maxWidth: 100,
+//   imperial: false
+// });
 
 // Fly to Location Control
 const flyToLocationControl = L.easyButton('fa-bullseye', () => {
@@ -162,6 +162,7 @@ $(".close-button").hide();
 
 /* MOUSE CLICK HANDLER */
 map.on("click", async e => {
+  console.log("Click");
   selectCountry(e);
 });
 
@@ -182,7 +183,7 @@ $("#tab").on("click", () => {
   $("#arrow").toggleClass("flip");
 });
 
-// Opens circle images on click
+// Open circle images on click.
 $(".circle-image").on("click", (e) => {
   const imageLink = $(e.currentTarget).attr("src");
   $(".big-image").html(`<img src=${imageLink} />`);
@@ -191,13 +192,13 @@ $(".circle-image").on("click", (e) => {
   $(".close-button").show();
 });
 
-// Closes large images
+// Close button functionality - closes large images.
 $(".close-button").on("click", () => {
   $(".big-image-container").hide();
   $(".black-screen").hide();
 })
 
-// Clears local storage on window close
+// Clears local storage on window close.
 window.addEventListener("unload", () => {
   localStorage.clear();
 });
