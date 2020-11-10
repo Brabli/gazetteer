@@ -45,8 +45,8 @@ function addGeojsonToMap(geojson, map) {
   const geojsonFeature = L.geoJson(geojson, {
     style: {
       "color": "rgb(9, 23, 50)",
-      "opacity": "0.7",
-      "weight": "2",
+      "opacity": 0.7,
+      "weight": 2,
       "fillColor": "rgba(3,70,118,1)"
     }
   });
@@ -136,7 +136,9 @@ async function addCityMarkers(iso2, flag, map) {
         try {
           const weatherInfo = await fetch(`php/getCityWeather.php?city=${city.name}`);
           weather = await weatherInfo.json();
-          sessionStorage.setItem(`${city.country}_${city.name}_weather`, JSON.stringify(weather));
+          if (weather.status === "ok") {
+            sessionStorage.setItem(`${city.country}_${city.name}_weather`, JSON.stringify(weather));
+          }
         } catch(err) {
           console.log(err);
         }
