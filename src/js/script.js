@@ -1,10 +1,12 @@
 // Module imports
 import { basemaps, overlays } from "./tiles.js";
 import { teleport, removeLayers, populateSelect } from "./helpers.js";
-import { fetchGeojson, fetchCountry, addGeojsonToMap, addCityMarkers, getCountryInfo, getCountryImages } from "./onclick.js";
+import { fetchGeojson, fetchCountry, addGeojsonToMap, addCityMarkers, getCountryInfo, getCountryImages, setMapView } from "./onclick.js";
 
-// Global loading variable
+// Global variables
 let loading = false;
+let selectedGeojsonFeature;
+let selectedCountryIso2;
 
 // These two variables override some settings that allow infinite horizontal scrolling possible. I didn't write them.
 const hackedSphericalMercator = L.Util.extend(L.Projection.SphericalMercator, {
@@ -50,18 +52,12 @@ const scaleControlKm = L.control.scale({
   metric: false
 });
 
-// const scaleControlMiles = L.control.scale({
-//   position: "bottomright",
-//   maxWidth: 100,
-//   imperial: false
-// });
-
 // Fly to Location Control
 const flyToLocationControl = L.easyButton('fa-bullseye', () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(loc => {
       teleport(map);
-      map.flyTo(new L.LatLng(loc.coords.latitude, loc.coords.longitude), 16);
+      map.setView(new L.LatLng(loc.coords.latitude, loc.coords.longitude), 16);
     });
   }
 }, "Fly to Current Location", {position: "topleft"});
@@ -69,8 +65,12 @@ const flyToLocationControl = L.easyButton('fa-bullseye', () => {
 // Centre Map Control
 const centreMapControl = L.easyButton('fa-expand', () => {
   teleport(map);
-  map.flyTo(new L.LatLng(45, -5), 2);
-}, "Centre Map", {position: "topleft"});
+  if (selectedGeojsonFeature) {
+    setMapView(selectedGeojsonFeature, selectedCountryIso2, map);
+  } else {
+    map.setView(new L.LatLng(40, -5), 2);
+  }
+}, "Centre Map on Selected Country", {position: "topleft"});
 
 // Attribution Control
 const attControl = L.control.attribution({
@@ -84,7 +84,6 @@ const attControl = L.control.attribution({
 attControl.addTo(map);
 layerControl.addTo(map);
 scaleControlKm.addTo(map);
-//scaleControlMiles.addTo(map);
 flyToLocationControl.addTo(map);
 centreMapControl.addTo(map);
 
@@ -99,10 +98,13 @@ $("#layer-control-close-button").on("click", () => {
 /*~~~~~~~~~~~~~~~~~~~~~~*/
 // Select country
 async function selectCountry(input) {
+  
   // Check to see if loading already, turn on loader if not.
   if (loading) return;
   loading = true;
   $(".loader").toggle();
+  selectedGeojsonFeature = "";
+  selectedCountryIso2 = "";
   try {
     removeLayers(map);
     // Determine which country user clicked over, returns a small amount of data about the country.
@@ -110,6 +112,7 @@ async function selectCountry(input) {
     // Check to see if user is indeed over a country
     if (countryData.message === "ok") {
       const {iso3, iso2, flag, countryName} = countryData.data;
+      selectedCountryIso2 = iso2;
       // Fetches the info used in the Country Info box.
       getCountryInfo(countryData.data);
       // Fetches country images
@@ -119,7 +122,9 @@ async function selectCountry(input) {
       // Geojson last as it's blocking
       const geojson = await fetchGeojson(iso3);
       teleport(map);
-      addGeojsonToMap(geojson, map);
+      selectedGeojsonFeature = addGeojsonToMap(geojson, map);
+      setMapView(selectedGeojsonFeature, iso2, map);
+
     }
   } catch(err) {
     console.log(err);
