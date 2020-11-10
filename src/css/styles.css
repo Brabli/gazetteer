@@ -1,4 +1,4 @@
-/* RESET */
+/* RESET STUFF */
 html {
   box-sizing: border-box;
   font-size: 16px;
@@ -18,7 +18,6 @@ img {
   max-width: 100%;
   height: auto;
 }
-/* RESET OVER */
 
 /* VARIABLES */
 :root {
@@ -27,6 +26,7 @@ img {
   --grey-text: #a8b5c3;
   --dark-blue: rgb(0,55,92);
   --blue: rgb(3,70,118);
+  --light-blue: rgb(0, 185, 236);
   --button-grey: #ececec;
   --navbar-height: 2.5rem;
 }
@@ -42,8 +42,6 @@ img {
 
 /* Inset box shadow */
 .nav-box-shadow {
-  -webkit-box-shadow: 0px -13px 6px 16px rgba(0,0,0,0.75);
-  -moz-box-shadow: 0px -13px 6px 16px rgba(0,0,0,0.75);
   box-shadow: 0px -13px 6px 16px rgba(0,0,0,0.75);  
 }
 
@@ -151,8 +149,9 @@ img {
   margin-top: 3.3rem;
 }
 
-.circle-image:hover, .circle-image:active {
+.circle-image:hover {
   transform: scale(1.1);
+  border-color: var(--light-blue);
 }
 
 .big-image-container {
@@ -192,6 +191,15 @@ img {
 }
 .close-button:hover {
   transform: scale(1.2);
+}
+
+.pixabay-logo {
+  position: relative;
+  height: 2.5rem;
+  z-index: 20;
+  left: 0.2rem;
+  /* Fits Pixabay logo to bottom of image perfectly */
+  bottom: 3.03rem;
 }
 
 .black-screen {
@@ -236,8 +244,6 @@ img {
   border: 2px solid var(--border-blue);
   padding: 0;
   background: linear-gradient(180deg, var(--dark-blue) 33%, var(--blue) 100%);
-  -webkit-box-shadow: inset -2px -2px 18px -6px rgba(0,0,0,0.75);
-  -moz-box-shadow: inset -2px -2px 18px -6px rgba(0,0,0,0.75);
   box-shadow: inset -2px -2px 18px -6px rgba(0,0,0,0.75);
 }
 
@@ -353,7 +359,7 @@ img {
 }
 
 #tab:active {
-  color: rgb(0, 185, 236);
+  color: var(--light-blue);
 }
 
 .country-name {
@@ -362,8 +368,6 @@ img {
 
 .content {
   pointer-events: all;
-  -webkit-box-shadow: inset 9px 4px 26px -9px rgba(0,0,0,0.75);
-  -moz-box-shadow: inset 9px 4px 26px -9px rgba(0,0,0,0.75);
   box-shadow: inset 9px 4px 26px -9px rgba(0,0,0,0.75);
   cursor: default;
   background: linear-gradient(-35deg, var(--blue) 33%, var(--dark-blue) 100% );
