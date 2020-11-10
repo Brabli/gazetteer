@@ -59,11 +59,11 @@
   // Get ISO2 code
   $country_ISO2 = $decoded["components"]["ISO_3166-1_alpha-2"];
 
-  // Get ISO3 code (sometimes it's not in respose JSON so we refer to a json file in country-borders that maps ISO2 codes to their ISO3 versions). iso codes are UPPERCASE at this point.
+  // Get ISO3 code (sometimes it's not in respose JSON so we refer to a json file in helper-json-files that maps ISO2 codes to their ISO3 versions). iso codes are UPPERCASE at this point.
   if (array_key_exists("ISO_3166-1_alpha-3", $decoded["components"])) {
     $country_ISO3 = $decoded["components"]["ISO_3166-1_alpha-3"];
   } else {
-    $iso_json = json_decode(file_get_contents("../country-borders/iso2-to-iso3.json"), TRUE);
+    $iso_json = json_decode(file_get_contents("../helper-json-files/iso2-to-iso3.json"), TRUE);
     $country_ISO3 = $iso_json[$country_ISO2];
   }
   
